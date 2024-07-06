@@ -2,14 +2,11 @@ import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.image.PixelFormat;
-import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import javafx.scene.paint.Color;
 
-import java.util.Random;
 
 public class Main extends Application {
 
@@ -93,15 +90,7 @@ public class Main extends Application {
         return (alpha << 24) | (red << 16) | (green << 8) | blue;
     }
 
-    private static int to32BitInteger(int var0, int var1, int var2, int var3) {
-        int var4 = var0 << 8;
-        var4 |= var1;
-        var4 <<= 8;
-        var4 |= var2;
-        var4 <<= 8;
-        var4 |= var3;
-        return var4;
-    }
+
 
     public static void main(String[] args) {
         launch(args);
