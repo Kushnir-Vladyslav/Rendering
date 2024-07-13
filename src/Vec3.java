@@ -45,10 +45,15 @@ public class Vec3 {
         return new Vec2(this.x, this.y);
     }
 
-    public Vec2 Prespective () {
-        Vec2 result = new Vec2(this.x / this.z, this.y / this.z);
+    //проектування трьовимірної точки на двовимірну площину екрану
+    public Vec2 Perspective () {
+        Vec2 result = new Vec2(this.x / this.z, -this.y / this.z);
         result.add(new Vec2(1, 1)).mult(0.5f);
         return result.mult(new Vec2(GlobalState.getScreenWidth(), GlobalState.getScreenHeight()));
     }
 
+    //функція для  проектування та малювання точки в кординатах відповідному цьому вектору
+    public void draw (int color) {
+        Perspective().draw(color);
+    }
 }

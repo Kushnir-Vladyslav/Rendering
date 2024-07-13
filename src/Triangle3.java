@@ -1,25 +1,30 @@
 public class Triangle3 {
-    public Vec3 p1;
-    public Vec3 p2;
-    public Vec3 p3;
+    public Vec3 Point1;
+    public Vec3 Point2;
+    public Vec3 Point3;
 
-    public Triangle3(Vec3 p1, Vec3 p2, Vec3 p3) {
-        this.p1 = p1;
-        this.p2 = p2;
-        this.p3 = p3;
+    public Triangle3(Vec3 P1, Vec3 P2, Vec3 P3) {
+        this.Point1 = P1;
+        this.Point2 = P2;
+        this.Point3 = P3;
     }
 
     public Vec2 getPoint2 (int num) {
-        if (num == 0) return p1.Prespective();
-        if (num == 1) return p2.Prespective();
-        if (num == 2) return p3.Prespective();
+        if (num == 0) return Point1.Perspective();
+        if (num == 1) return Point2.Perspective();
+        if (num == 2) return Point3.Perspective();
         return new Vec2(0);
     }
 
     public Vec3 getPoint3 (int num) {
-        if (num == 0) return p1;
-        if (num == 1) return p2;
-        if (num == 2) return p3;
+        if (num == 0) return Point1;
+        if (num == 1) return Point2;
+        if (num == 2) return Point3;
         return new Vec3(0);
+    }
+
+    //малювання трикутника заповнюючи його одним певним кольором
+    public void draw (int color) {
+        new Triangle2(Point1.Perspective(), Point2.Perspective(), Point3.Perspective()).draw(color);
     }
 }

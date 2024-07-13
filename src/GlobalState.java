@@ -1,26 +1,29 @@
 public class GlobalState {
-    private static int screenWidth = 400;
-    private static int screenHeight = 400;
+    //початковий розмір вікна, може змінюватись користувачем
+    private static int ScreenWidth = 400;
+    private static int ScreenHeight = 400;
 
+    //масив пікселів що відображаються на екрані
+    public static int[] Pixels;
 
     public static int getScreenWidth() {
-        return screenWidth;
+        return ScreenWidth;
     }
 
     public static int getScreenHeight() {
-        return screenHeight;
+        return ScreenHeight;
     }
 
-    public static void setScreenWidth(int width) {
-        screenWidth = width;
+    public static void setScreenWidth(int Width) {
+        ScreenWidth = Width;
     }
 
-    public static void setScreenHeight(int height) {
-        screenHeight = height;
+    public static void setScreenHeight(int Height) {
+        ScreenHeight = Height;
     }
 
-    public static void setScreenSize(int width, int height) {
-        screenWidth = width;
-        screenHeight = height;
+    public static void setScreenSize(int Width, int Height) {
+        ScreenWidth = Width;
+        ScreenHeight = Height;
     }
 }

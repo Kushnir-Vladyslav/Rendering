@@ -26,8 +26,30 @@ public class Vec2 {
         return this;
     }
 
+    public Vec2 add (float x, float y) {
+        this.x += x;
+        this.y += y;
+        return this;
+    }
+
     public static Vec2 add (Vec2 first, Vec2 second) {
        return new Vec2(first.x + second.x, first.y + second.y);
+    }
+
+    public Vec2 sub (Vec2 other) {
+        this.x -= other.x;
+        this.y -= other.y;
+        return this;
+    }
+
+    public Vec2 sub (float x, float y) {
+        this.x -= x;
+        this.y -= y;
+        return this;
+    }
+
+    public static Vec2 sub (Vec2 first, Vec2 second) {
+        return new Vec2(first.x - second.x, first.y - second.y);
     }
 
     public Vec2 mult (Vec2 other) {
@@ -50,5 +72,14 @@ public class Vec2 {
         this.x /= num;
         this.y /= num;
         return this;
+    }
+
+    //функція для малювання точки в кординатах відповідному цьому вектору
+    public void draw (int color) {
+        if (this.x >= 0 && this.x < GlobalState.getScreenWidth() &&
+        this.y >= 0 && this.y < GlobalState.getScreenHeight()) {
+            int pixelID = (int) this.y * GlobalState.getScreenWidth() + (int) this.x;
+            GlobalState.Pixels[pixelID] = color;
+        }
     }
 }
