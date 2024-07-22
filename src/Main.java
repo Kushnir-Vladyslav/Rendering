@@ -86,15 +86,28 @@ public class Main extends Application {
         float cos = (float)cos(toRadians(sum));
         float sin = (float)sin(toRadians(sum));
 
-        for (float depth = 12; depth > 1.5f; depth--) {
-            Triangle3 triangle = new Triangle3(
-                    new Vec3(-1.f + cos, -0.5f + sin, depth),
-                    new Vec3(1.f + cos, -0.5f + sin, depth),
-                    new Vec3(0f + cos, 0.5f + sin, depth)
-            );
+        //анімація, по колу рухіється декілька трикутників на різній відстані
+//        for (float depth = 12; depth > 1.5f; depth--) {
+//            Triangle3 triangle = new Triangle3(
+//                    new Vec3(-1.f + cos, -0.5f + sin, depth),
+//                    new Vec3(1.f + cos, -0.5f + sin, depth),
+//                    new Vec3(0f + cos, 0.5f + sin, depth)
+//            );
+//
+//            triangle.draw(Colors[((int)depth) % Colors.length]);
+//        }
 
-            triangle.draw(Colors[((int)depth) % Colors.length]);
-        }
+        //альтернативна анімація, поколу рухіється трикутник то наближаючись то віддаляючись
+        float depth = 2f + (float)(sum / 25 % 16);
+        if (depth > 10) depth = 20.f - depth;
+        Triangle3 triangle = new Triangle3(
+                new Vec3(-1.f + cos, -0.5f + sin, depth),
+                new Vec3(1.f + cos, -0.5f + sin, depth),
+                new Vec3(0f + cos, 0.5f + sin, depth)
+        );
+
+        triangle.draw(Colors[((int)depth) % Colors.length]);
+
     }
 
     //масив можливих кольорів
