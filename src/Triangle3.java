@@ -3,10 +3,14 @@ public class Triangle3 {
     public Vec3 Point2;
     public Vec3 Point3;
 
-    public Triangle3(Vec3 P1, Vec3 P2, Vec3 P3) {
+    public Vec3[] Colors;
+
+    public Triangle3(Vec3 P1, Vec3 P2, Vec3 P3, Vec3[] Colors) {
         this.Point1 = P1;
         this.Point2 = P2;
         this.Point3 = P3;
+
+        this.Colors = Colors;
     }
 
     public Vec2 getPoint2 (int num) {
@@ -24,7 +28,7 @@ public class Triangle3 {
     }
 
     //малювання трикутника заповнюючи його одним певним кольором
-    public void draw (int color) {
-        new Triangle2(Point1.Perspective(), Point2.Perspective(), Point3.Perspective()).draw(color);
+    public void draw () {
+        new Triangle2(Point1.Perspective(), Point2.Perspective(), Point3.Perspective(), Colors).draw();
     }
 }

@@ -29,6 +29,18 @@ public class Vec3 {
         return this;
     }
 
+    public Vec3 mult (float num) {
+        this.x *= num;
+        this.y *= num;
+        this.z *= num;
+        return this;
+    }
+
+    public static Vec3 mult (Vec3 vector, float num) {
+        return new Vec3(vector.x * num, vector.y * num, vector.z * num);
+    }
+
+    //для використання його як вектора та кординат тривимірної точки
     public float x () {
         return this.x;
     }
@@ -38,6 +50,19 @@ public class Vec3 {
     }
 
     public float z () {
+        return this.z;
+    }
+
+    //для використання його як кольора що містить RGB в діапазоні 0...1
+    public float r () {
+        return this.x;
+    }
+
+    public float g () {
+        return this.y;
+    }
+
+    public float b () {
         return this.z;
     }
 

@@ -98,20 +98,43 @@ public class Main extends Application {
 //        }
 
         //альтернативна анімація, поколу рухіється трикутник то наближаючись то віддаляючись
-        float depth = 2f + (float)(sum / 25 % 16);
+        float depth = 2f + (float)(sum / 100 % 16);
         if (depth > 10) depth = 20.f - depth;
         Triangle3 triangle = new Triangle3(
-                new Vec3(-1.f + cos, -0.5f + sin, depth),
-                new Vec3(1.f + cos, -0.5f + sin, depth),
-                new Vec3(0f + cos, 0.5f + sin, depth)
+
+
+                new Vec3(0f + cos, 0.5f + sin, depth),
+                new Vec3(1.f + cos, -0.5f + sin, depth + cos),
+                new Vec3(-1.f + cos, -0.5f + sin, depth + sin),
+                receiveColors((float)sum)
         );
 
-        triangle.draw(Colors[((int)depth) % Colors.length]);
+        triangle.draw();
 
     }
 
+    //генерує кольори для кутів, які поступово змінюються
+    private static Vec3[] receiveColors(float delt) {
+        delt /= 100;
+        delt %= 3;
+        if (delt < 1.f) {
+            return new Vec3[] {new Vec3(1 - delt, delt, 0), new Vec3(0, 1 - delt, delt), new Vec3(delt, 0, 1 - delt)};
+        } else if (delt < 2.f) {
+            delt -= 1.f;
+            return new Vec3[] {new Vec3(0, 1 - delt, delt), new Vec3(delt, 0, 1 - delt), new Vec3(1 - delt, delt, 0)};
+        } else {
+            delt -= 2.f;
+            return new Vec3[] {new Vec3(delt, 0, 1 - delt), new Vec3(1 - delt, delt, 0), new Vec3(0, 1 - delt, delt)};
+        }
+    }
+
     //масив можливих кольорів
-    int[] Colors = {0XFFFF0000, 0XFFFFFF00, 0XFF00FF00, 0XFF00FFFF, 0XFF0000FF, 0XFFFF00FF};
+    Vec3[] Colors = {new Vec3(1, 0, 0),
+            new Vec3(1, 1, 0),
+            new Vec3(0, 1, 0),
+            new Vec3(0, 1, 1),
+            new Vec3(0, 0, 1),
+            new Vec3(1, 0, 1)};
 
     //функція для закрашування фону
     public static void fillBackground (int color) {
