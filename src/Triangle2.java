@@ -3,6 +3,10 @@ public class Triangle2 {
     public Vec2 Point2;
     public Vec2 Point3;
 
+    public float Depth1;
+    public float Depth2;
+    public float Depth3;
+
     public Vec3 Color1;
     public Vec3 Color2;
     public Vec3 Color3;
@@ -15,10 +19,11 @@ public class Triangle2 {
     private int maxY;
 
     //створення новго трикутника проектованого на площину екрана, та відсоровування кутів по часовій стрілці
-    public Triangle2(Vec2 P1, Vec2 P2, Vec2 P3, Vec3[] Colors) {
+    public Triangle2(Vec2 P1, Vec2 P2, Vec2 P3, Vec3[] Colors, float[] Depth) {
         if (P1.x() <= P2.x() && P1.x() <= P3.x()) {
             this.Point1 = P1;
             this.Color1 = Colors[0];
+            this.Depth1 = Depth[0];
 
             if(vectorProduct(Vec2.sub(P2, Point1), Vec2.sub(P3, Point1)) < 0) {
                 this.Point2 = P2;
@@ -26,16 +31,23 @@ public class Triangle2 {
 
                 this.Color2 = Colors[1];
                 this.Color3 = Colors[2];
+
+                this.Depth2 = Depth[1];
+                this.Depth3 = Depth[2];
             } else {
                 this.Point2 = P3;
                 this.Point3 = P2;
 
                 this.Color2 = Colors[2];
                 this.Color3 = Colors[1];
+
+                this.Depth2 = Depth[2];
+                this.Depth3 = Depth[1];
             }
         } else if (P2.x() <= P3.x()) {
             this.Point1 = P2;
             this.Color1 = Colors[1];
+            this.Depth1 = Depth[1];
 
             if(vectorProduct(Vec2.sub(P1, Point1), Vec2.sub(P3, Point1)) < 0) {
                 this.Point2 = P1;
@@ -43,16 +55,23 @@ public class Triangle2 {
 
                 this.Color2 = Colors[0];
                 this.Color3 = Colors[2];
+
+                this.Depth2 = Depth[0];
+                this.Depth3 = Depth[2];
             } else {
                 this.Point2 = P3;
                 this.Point3 = P1;
 
                 this.Color2 = Colors[2];
                 this.Color3 = Colors[0];
+
+                this.Depth2 = Depth[2];
+                this.Depth3 = Depth[0];
             }
         } else {
             this.Point1 = P3;
             this.Color1 = Colors[2];
+            this.Depth1 = Depth[2];
 
             if(vectorProduct(Vec2.sub(P1, Point1), Vec2.sub(P2, Point1)) < 0) {
                 this.Point2 = P1;
@@ -60,12 +79,18 @@ public class Triangle2 {
 
                 this.Color2 = Colors[0];
                 this.Color3 = Colors[1];
+
+                this.Depth2 = Depth[0];
+                this.Depth3 = Depth[1];
             } else {
                 this.Point2 = P2;
                 this.Point3 = P1;
 
                 this.Color2 = Colors[1];
                 this.Color3 = Colors[0];
+
+                this.Depth2 = Depth[1];
+                this.Depth3 = Depth[0];
             }
         }
 
@@ -112,30 +137,37 @@ public class Triangle2 {
                 Vec2 PixelVector3 = Vec2.sub(PixelPoint, Point3);
 
                 //довжина векторнионого добутку для вектору кожного ребра та вектору до точки
-                float lengthVectorProduct1 = vectorProduct(PixelVector1, Edge1);
-                float lengthVectorProduct2 = vectorProduct(PixelVector2, Edge2);
-                float lengthVectorProduct3 = vectorProduct(PixelVector3, Edge3);
+                float LengthVectorProduct1 = vectorProduct(PixelVector1, Edge1);
+                float LengthVectorProduct2 = vectorProduct(PixelVector2, Edge2);
+                float LengthVectorProduct3 = vectorProduct(PixelVector3, Edge3);
 
                 //перевірка чи потрапляє точка в трикутник
-                if ((lengthVectorProduct1 >= 0 || (isTopLeft1 && lengthVectorProduct1 == 0.f)) &&
-                        (lengthVectorProduct2 >= 0 || (isTopLeft2 && lengthVectorProduct2 == 0.f)) &&
-                        (lengthVectorProduct3 >= 0 || (isTopLeft3 && lengthVectorProduct3 == 0.f))) {
+                if ((LengthVectorProduct1 >= 0 || (isTopLeft1 && LengthVectorProduct1 == 0.f)) &&
+                        (LengthVectorProduct2 >= 0 || (isTopLeft2 && LengthVectorProduct2 == 0.f)) &&
+                        (LengthVectorProduct3 >= 0 || (isTopLeft3 && LengthVectorProduct3 == 0.f))) {
+                    // положення точки в масиві пікселів та масиві глибин
+                    int PixelID = y * GlobalState.getScreenWidth() + x;
 
-                    //коефіціенти для інтерполяції кольорові в трикутнику
-                    float T1 = -lengthVectorProduct2 / baryCentricDiv;
-                    float T2 = -lengthVectorProduct3 / baryCentricDiv;
-                    float T3 = -lengthVectorProduct1 / baryCentricDiv;
+                    //коефіціенти для інтерполяції кольоровів/глибини в трикутнику
+                    float T1 = -LengthVectorProduct2 / baryCentricDiv;
+                    float T2 = -LengthVectorProduct3 / baryCentricDiv;
+                    float T3 = -LengthVectorProduct1 / baryCentricDiv;
 
-                    // розраховуємо вклад кожного з кольорів в колір точки
-                    Vec3 newColorPart1 = Vec3.mult(Color1, T1);
-                    Vec3 newColorPart2 = Vec3.mult(Color2, T2);
-                    Vec3 newColorPart3 = Vec3.mult(Color3, T3);
+                    //глибина пікселя
+                    float Depth = T1 / Depth1 + T2 / Depth2 + T3 / Depth3;
 
-                    // новий колір, з кольорами в діапазоні 0 ... 1
-                    Vec3 newColor = newColorPart1.add(newColorPart2).add(newColorPart3);
+                    if (Depth > GlobalState.DepthBuffer[PixelID]) {
+                        // розраховуємо вклад кожного з кольорів в колір точки
+                        Vec3 NewColorPart1 = Vec3.mult(Color1, T1);
+                        Vec3 NewColorPart2 = Vec3.mult(Color2, T2);
+                        Vec3 NewColorPart3 = Vec3.mult(Color3, T3);
 
-                    int pixelID = y * GlobalState.getScreenWidth() + x;
-                    GlobalState.Pixels[pixelID] = toRGBA(newColor);
+                        // новий колір, з кольорами в діапазоні 0 ... 1
+                        Vec3 NewColor = NewColorPart1.add(NewColorPart2).add(NewColorPart3);
+
+                        GlobalState.Pixels[PixelID] = toRGBA(NewColor);
+                        GlobalState.DepthBuffer[PixelID] = Depth;
+                    }
                 }
 
             }

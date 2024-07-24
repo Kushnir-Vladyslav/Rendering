@@ -6,6 +6,9 @@ public class GlobalState {
     //масив пікселів що відображаються на екрані
     public static int[] Pixels;
 
+    //масив глибин пікселів
+    public static float [] DepthBuffer;
+
     public static int getScreenWidth() {
         return ScreenWidth;
     }

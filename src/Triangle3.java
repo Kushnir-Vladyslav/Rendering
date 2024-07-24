@@ -29,6 +29,8 @@ public class Triangle3 {
 
     //малювання трикутника заповнюючи його одним певним кольором
     public void draw () {
-        new Triangle2(Point1.Perspective(), Point2.Perspective(), Point3.Perspective(), Colors).draw();
+        new Triangle2(Point1.Perspective(), Point2.Perspective(), Point3.Perspective(),
+                Colors,
+                new float[] {Point1.z(), Point2.z(), Point3.z()}).draw();
     }
 }

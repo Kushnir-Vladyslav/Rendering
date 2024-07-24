@@ -23,6 +23,7 @@ public class Main extends Application {
         writableImage = new WritableImage(GlobalState.getScreenWidth(), GlobalState.getScreenHeight());
 
         GlobalState.Pixels = new int [GlobalState.getScreenWidth() * GlobalState.getScreenHeight()];
+        GlobalState.DepthBuffer = new float [GlobalState.getScreenWidth() * GlobalState.getScreenHeight()];
 
         imageView = new ImageView(writableImage);
 
@@ -70,6 +71,7 @@ public class Main extends Application {
     private void updateImageSize() {
         writableImage = new WritableImage( GlobalState.getScreenWidth(), GlobalState.getScreenHeight());
         GlobalState.Pixels = new int[ GlobalState.getScreenWidth() * GlobalState.getScreenHeight()];
+        GlobalState.DepthBuffer = new float [GlobalState.getScreenWidth() * GlobalState.getScreenHeight()];
         imageView.setImage(writableImage);
     }
 
@@ -78,15 +80,16 @@ public class Main extends Application {
     //основна функція відрисовки
     private void updatePixels(long time) {
 
-        sum += (double)time / 10000000;
+        sum += (double) time / 10000000;
 //        System.out.println(1 / ((double)time / 1000000000));
 
         fillBackground(0xFF000000);
 
-        float cos = (float)cos(toRadians(sum));
-        float sin = (float)sin(toRadians(sum));
+        float cos = (float) cos(toRadians(sum));
+        float sin = (float) sin(toRadians(sum));
 
         //анімація, по колу рухіється декілька трикутників на різній відстані
+
 //        for (float depth = 12; depth > 1.5f; depth--) {
 //            Triangle3 triangle = new Triangle3(
 //                    new Vec3(-1.f + cos, -0.5f + sin, depth),
@@ -97,19 +100,50 @@ public class Main extends Application {
 //            triangle.draw(Colors[((int)depth) % Colors.length]);
 //        }
 
+
         //альтернативна анімація, поколу рухіється трикутник то наближаючись то віддаляючись
-        float depth = 2f + (float)(sum / 100 % 16);
-        if (depth > 10) depth = 20.f - depth;
-        Triangle3 triangle = new Triangle3(
+//        float depth = 2f + (float)(sum / 100 % 16);
+//        if (depth > 10) depth = 20.f - depth;
+//        Triangle3 triangle = new Triangle3(
+//
+//
+//                new Vec3(0f + cos, 0.5f + sin, depth ),
+//                new Vec3(1.f + cos, -0.5f + sin, depth + cos),
+//                new Vec3(-1.f + cos, -0.5f + sin, depth + sin),
+//                receiveColors((float)sum)
+//        );
+//
+//        triangle.draw();
 
+        // перевірка правельності відображення трикутників що перетинаються
 
-                new Vec3(0f + cos, 0.5f + sin, depth),
-                new Vec3(1.f + cos, -0.5f + sin, depth + cos),
-                new Vec3(-1.f + cos, -0.5f + sin, depth + sin),
-                receiveColors((float)sum)
+        Triangle3 triangle1 = new Triangle3(
+                new Vec3(0f, 0.5f , 1.f ),
+                new Vec3(0.5f, -0.5f, 1.f),
+                new Vec3(-0.5f, -0.5f, 1.f),
+                new Vec3[] {new Vec3(1, 0,0 ), new Vec3(0, 1,0 ), new Vec3(0, 0,1 )}
         );
 
-        triangle.draw();
+        triangle1.draw();
+
+        Triangle3 triangle2 = new Triangle3(
+                new Vec3(0f, 0.5f , 1.f ),
+                new Vec3(0.5f, -0.5f, 1.2f),
+                new Vec3(-0.5f, -0.5f, 0.8f),
+                new Vec3[] {new Vec3(1, 1,0 ), new Vec3(0, 1,1 ), new Vec3(1, 0,1 )}
+        );
+
+        triangle2.draw();
+
+        Triangle3 triangle3 = new Triangle3(
+                new Vec3(0f, -0.5f , 0.6f ),
+                new Vec3(-1.5f, 0.5f, 3.0f),
+                new Vec3(1.5f, 0.5f, 3.f),
+                new Vec3[] {new Vec3(1, 1,0 ), new Vec3(0, 1,1 ), new Vec3(1, 0,1 )}
+        );
+
+        triangle3.draw();
+
 
     }
 
@@ -136,11 +170,12 @@ public class Main extends Application {
             new Vec3(0, 0, 1),
             new Vec3(1, 0, 1)};
 
-    //функція для закрашування фону
+    //функція для закрашування фону, та оновлення масиву глибин
     public static void fillBackground (int color) {
         for (int y = 0; y < GlobalState.getScreenHeight(); y++) {
             for (int x = 0; x < GlobalState.getScreenWidth(); x++) {
                 GlobalState.Pixels[y * GlobalState.getScreenWidth() + x] = color;
+                GlobalState.DepthBuffer[y * GlobalState.getScreenWidth() + x] = 0.f;
             }
         }
     }
