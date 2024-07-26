@@ -1,3 +1,4 @@
+@Deprecated
 public class Vec3 {
     private float x;
     private float y;

@@ -7,7 +7,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
-import static java.lang.Math.*;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
 import static java.lang.Math.toRadians;
 
 
@@ -56,7 +57,10 @@ public class Main extends Application {
                     last = now;
                     return;
                 }
-                updatePixels(now - last);
+
+                GlobalState.Time += (float) (now - last) / 1000000000;
+
+                updatePixels((float) (now - last) / 1000000000);
                 writableImage.getPixelWriter().setPixels(0, 0,
                         GlobalState.getScreenWidth(), GlobalState.getScreenHeight(),
                         PixelFormat.getIntArgbInstance(), GlobalState.Pixels, 0, GlobalState.getScreenWidth());
@@ -75,100 +79,128 @@ public class Main extends Application {
         imageView.setImage(writableImage);
     }
 
-    private double sum = 0;
-
     //основна функція відрисовки
-    private void updatePixels(long time) {
+    private void updatePixels(float time) {
 
-        sum += (double) time / 10000000;
-//        System.out.println(1 / ((double)time / 1000000000));
 
+//        System.out.println(GlobalState.Time);
         fillBackground(0xFF000000);
 
-        float cos = (float) cos(toRadians(sum));
-        float sin = (float) sin(toRadians(sum));
-
-        //анімація, по колу рухіється декілька трикутників на різній відстані
-
-//        for (float depth = 12; depth > 1.5f; depth--) {
-//            Triangle3 triangle = new Triangle3(
-//                    new Vec3(-1.f + cos, -0.5f + sin, depth),
-//                    new Vec3(1.f + cos, -0.5f + sin, depth),
-//                    new Vec3(0f + cos, 0.5f + sin, depth)
-//            );
-//
-//            triangle.draw(Colors[((int)depth) % Colors.length]);
-//        }
-
-
-        //альтернативна анімація, поколу рухіється трикутник то наближаючись то віддаляючись
-//        float depth = 2f + (float)(sum / 100 % 16);
-//        if (depth > 10) depth = 20.f - depth;
-//        Triangle3 triangle = new Triangle3(
-//
-//
-//                new Vec3(0f + cos, 0.5f + sin, depth ),
-//                new Vec3(1.f + cos, -0.5f + sin, depth + cos),
-//                new Vec3(-1.f + cos, -0.5f + sin, depth + sin),
-//                receiveColors((float)sum)
-//        );
-//
-//        triangle.draw();
+        float cos = (float) cos(toRadians(GlobalState.Time));
+        float sin = (float) sin(toRadians(GlobalState.Time));
 
         // перевірка правельності відображення трикутників що перетинаються
 
-        Triangle3 triangle1 = new Triangle3(
-                new Vec3(0f, 0.5f , 1.f ),
-                new Vec3(0.5f, -0.5f, 1.f),
-                new Vec3(-0.5f, -0.5f, 1.f),
-                new Vec3[] {new Vec3(1, 0,0 ), new Vec3(0, 1,0 ), new Vec3(0, 0,1 )}
+        Matrix4 tr = Matrix4.scaleMatrix4(1, 1, 1).mult(
+                Matrix4.rotationMatrix4(GlobalState.Time * 100, GlobalState.Time * 100, GlobalState.Time * 100)
+        ).mult(
+                Matrix4.translationMatrix4(0, 0, 2)
         );
 
-        triangle1.draw();
+//        Triangle3 triangle1 = new Triangle3(
+//                new Vec4(0f, 0.5f , 0.f ),
+//                new Vec4(0.5f, -0.5f, 0.f),
+//                new Vec4(-0.5f, -0.5f, 0.f),
+//                tr.clone(),
+//                new Vec4[] {new Vec4(1, 0,0 ), new Vec4(0, 1,0 ), new Vec4(0, 0,1 )}
+//        );
+//
+//        triangle1.draw();
+//
+//        Triangle3 triangle2 = new Triangle3(
+//                new Vec4(0f, 0.5f , 0.f ),
+//                new Vec4(0.5f, -0.5f, 0.2f),
+//                new Vec4(-0.5f, -0.5f, -0.2f),
+//                tr.clone(),
+//                new Vec4[] {new Vec4(1, 1,0 ), new Vec4(0, 1,1 ), new Vec4(1, 0,1 )}
+//        );
+//
+//        triangle2.draw();
+//
+//        Triangle3 triangle3 = new Triangle3(
+//                new Vec4(0f, -0.5f , -0.4f ),
+//                new Vec4(-1.5f, 0.5f, 2.0f),
+//                new Vec4(1.5f, 0.5f, 2.f),
+//                tr.clone(),
+//                new Vec4[] {new Vec4(1, 1,0 ), new Vec4(0, 1,1 ), new Vec4(1, 0,1 )}
+//        );
+//
+//        triangle3.draw();
 
-        Triangle3 triangle2 = new Triangle3(
-                new Vec3(0f, 0.5f , 1.f ),
-                new Vec3(0.5f, -0.5f, 1.2f),
-                new Vec3(-0.5f, -0.5f, 0.8f),
-                new Vec3[] {new Vec3(1, 1,0 ), new Vec3(0, 1,1 ), new Vec3(1, 0,1 )}
-        );
 
-        triangle2.draw();
+        // Масив вершин трикутників
+        Vec4[] VerticesBuffer = {
+                // передня стінка куба
+                new Vec4( -0.5f, -0.5f, -0.5f),
+                new Vec4( -0.5f, 0.5f, -0.5f),
+                new Vec4( 0.5f, 0.5f, -0.5f),
+                new Vec4( 0.5f, -0.5f, -0.5f),
+                // задня стінка куба
+                new Vec4( -0.5f, -0.5f, 0.5f),
+                new Vec4( -0.5f, 0.5f, 0.5f),
+                new Vec4( 0.5f, 0.5f, 0.5f),
+                new Vec4( 0.5f, -0.5f, 0.5f),
+        };
 
-        Triangle3 triangle3 = new Triangle3(
-                new Vec3(0f, -0.5f , 0.6f ),
-                new Vec3(-1.5f, 0.5f, 3.0f),
-                new Vec3(1.5f, 0.5f, 3.f),
-                new Vec3[] {new Vec3(1, 1,0 ), new Vec3(0, 1,1 ), new Vec3(1, 0,1 )}
-        );
+        //масив кольорів вершин трикутників
+        Vec4[] ColorsBuffer = {
+                new Vec4( 1, 0, 0),
+                new Vec4( 0, 1, 0),
+                new Vec4( 0, 0, 1),
+                new Vec4( 1, 0, 1),
 
-        triangle3.draw();
+                new Vec4( 1, 1, 0),
+                new Vec4( 0, 1, 1),
+                new Vec4( 1, 0, 1),
+                new Vec4( 1, 1, 1),
+        };
 
+        // масив індексів вершин для відмальовування сторін
+        int[] IndexBuffer = {
+                // передня сторона
+                0, 1, 2,
+                2, 3, 0,
 
-    }
+                // задня сторона
+                6, 5, 4,
+                4, 7, 6,
 
-    //генерує кольори для кутів, які поступово змінюються
-    private static Vec3[] receiveColors(float delt) {
-        delt /= 100;
-        delt %= 3;
-        if (delt < 1.f) {
-            return new Vec3[] {new Vec3(1 - delt, delt, 0), new Vec3(0, 1 - delt, delt), new Vec3(delt, 0, 1 - delt)};
-        } else if (delt < 2.f) {
-            delt -= 1.f;
-            return new Vec3[] {new Vec3(0, 1 - delt, delt), new Vec3(delt, 0, 1 - delt), new Vec3(1 - delt, delt, 0)};
-        } else {
-            delt -= 2.f;
-            return new Vec3[] {new Vec3(delt, 0, 1 - delt), new Vec3(1 - delt, delt, 0), new Vec3(0, 1 - delt, delt)};
+                // ліва сторона
+                4, 5, 1,
+                1, 0, 4,
+
+                // права сторона
+                3, 2, 6,
+                6, 7, 3,
+
+                // верхня сторона
+                1, 5, 6,
+                6, 2, 1,
+
+                // нижня сторона
+                4, 0, 3,
+                3, 7, 4,
+        };
+
+        for (int i = 0; i < IndexBuffer.length; i+= 3) {
+            new Triangle3(
+                    VerticesBuffer[IndexBuffer[i]],
+                    VerticesBuffer[IndexBuffer[i + 1]],
+                    VerticesBuffer[IndexBuffer[i + 2]],
+                    tr.clone(),
+                    new Vec4[] {ColorsBuffer[IndexBuffer[i]], ColorsBuffer[IndexBuffer[i + 1]], ColorsBuffer[IndexBuffer[i + 2]]}
+            ).draw();
         }
+
+
     }
 
-    //масив можливих кольорів
-    Vec3[] Colors = {new Vec3(1, 0, 0),
-            new Vec3(1, 1, 0),
-            new Vec3(0, 1, 0),
-            new Vec3(0, 1, 1),
-            new Vec3(0, 0, 1),
-            new Vec3(1, 0, 1)};
+    private float cosm(float angle) {
+        return (float) Math.cos(toRadians(angle));
+    }
+    private float sinm(float angle) {
+        return (float) Math.sin(toRadians(angle));
+    }
 
     //функція для закрашування фону, та оновлення масиву глибин
     public static void fillBackground (int color) {
@@ -179,13 +211,6 @@ public class Main extends Application {
             }
         }
     }
-
-    //генерація кольору на основі 4-х чисел до 255
-    public static int toRGBA(int alpha, int red , int green , int blue ) {
-        return (alpha << 24) | (red << 16) | (green << 8) | blue;
-    }
-
-
 
     public static void main(String[] args) {
         launch(args);

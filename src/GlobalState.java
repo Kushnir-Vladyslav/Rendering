@@ -9,6 +9,9 @@ public class GlobalState {
     //масив глибин пікселів
     public static float [] DepthBuffer;
 
+    //Час від початку запуску програми
+    public static float Time = 0.f;
+
     public static int getScreenWidth() {
         return ScreenWidth;
     }
