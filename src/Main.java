@@ -2,6 +2,7 @@ import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.image.PixelFormat;
+import javafx.scene.input.KeyCode;
 import javafx.scene.image.WritableImage;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
@@ -32,10 +33,63 @@ public class Main extends Application {
         root.getChildren().add(imageView);
         Scene scene = new Scene(root, GlobalState.getScreenWidth(), GlobalState.getScreenHeight());
 
-
         primaryStage.setTitle("Simple render");
         primaryStage.setScene(scene);
         primaryStage.show();
+
+        GlobalState.Objects.add(new DrawableObject(
+                // Масив вершин трикутників
+        new Vec4[] {
+                // передня стінка куба
+                new Vec4( -0.5f, -0.5f, -0.5f),
+                new Vec4( -0.5f, 0.5f, -0.5f),
+                new Vec4( 0.5f, 0.5f, -0.5f),
+                new Vec4( 0.5f, -0.5f, -0.5f),
+                // задня стінка куба
+                new Vec4( -0.5f, -0.5f, 0.5f),
+                new Vec4( -0.5f, 0.5f, 0.5f),
+                new Vec4( 0.5f, 0.5f, 0.5f),
+                new Vec4( 0.5f, -0.5f, 0.5f),
+        },
+        //масив кольорів вершин трикутників
+        new Vec4[] {
+                new Vec4( 1, 0, 0),
+                new Vec4( 0, 1, 0),
+                new Vec4( 0, 0, 1),
+                new Vec4( 1, 0, 1),
+
+                new Vec4( 1, 1, 0),
+                new Vec4( 0, 1, 1),
+                new Vec4( 1, 0, 1),
+                new Vec4( 1, 1, 1),
+        },
+        // масив індексів вершин для відмальовування сторін
+         new int[] {
+                // передня сторона
+                0, 1, 2,
+                2, 3, 0,
+
+                // задня сторона
+                6, 5, 4,
+                4, 7, 6,
+
+                // ліва сторона
+                4, 5, 1,
+                1, 0, 4,
+
+                // права сторона
+                3, 2, 6,
+                6, 7, 3,
+
+                // верхня сторона
+                1, 5, 6,
+                6, 2, 1,
+
+                // нижня сторона
+                4, 0, 3,
+                3, 7, 4,
+        }
+        ));
 
         //обробники подій зміни розміру вікна
         scene.widthProperty().addListener((observable, oldValue, newValue) -> {
@@ -46,6 +100,25 @@ public class Main extends Application {
         scene.heightProperty().addListener((observable, oldValue, newValue) -> {
             GlobalState.setScreenHeight(newValue.intValue());
             updateImageSize();
+        });
+
+        //Обробка натискання клавіш
+        scene.setOnKeyPressed((event) -> {
+            switch (event.getCode()) {
+                case UP, W -> GlobalState.IsUp = true;
+                case DOWN, S -> GlobalState.IsDown = true;
+                case LEFT, A -> GlobalState.IsLeft = true;
+                case RIGHT, D -> GlobalState.IsRight = true;
+            }
+        });
+
+        scene.setOnKeyReleased((event) -> {
+            switch (event.getCode()) {
+                case UP, W -> GlobalState.IsUp = false;
+                case DOWN, S -> GlobalState.IsDown = false;
+                case LEFT, A -> GlobalState.IsLeft = false;
+                case RIGHT, D -> GlobalState.IsRight = false;
+            }
         });
 
         //запуск таймеру для анімації
@@ -89,109 +162,37 @@ public class Main extends Application {
         float cos = (float) cos(toRadians(GlobalState.Time));
         float sin = (float) sin(toRadians(GlobalState.Time));
 
-        // перевірка правельності відображення трикутників що перетинаються
-
-        Matrix4 tr = Matrix4.scaleMatrix4(1, 1, 1).mult(
-                Matrix4.rotationMatrix4(GlobalState.Time * 100, GlobalState.Time * 100, GlobalState.Time * 100)
-        ).mult(
-                Matrix4.translationMatrix4(0, 0, 2)
-        );
-
-//        Triangle3 triangle1 = new Triangle3(
-//                new Vec4(0f, 0.5f , 0.f ),
-//                new Vec4(0.5f, -0.5f, 0.f),
-//                new Vec4(-0.5f, -0.5f, 0.f),
-//                tr.clone(),
-//                new Vec4[] {new Vec4(1, 0,0 ), new Vec4(0, 1,0 ), new Vec4(0, 0,1 )}
-//        );
-//
-//        triangle1.draw();
-//
-//        Triangle3 triangle2 = new Triangle3(
-//                new Vec4(0f, 0.5f , 0.f ),
-//                new Vec4(0.5f, -0.5f, 0.2f),
-//                new Vec4(-0.5f, -0.5f, -0.2f),
-//                tr.clone(),
-//                new Vec4[] {new Vec4(1, 1,0 ), new Vec4(0, 1,1 ), new Vec4(1, 0,1 )}
-//        );
-//
-//        triangle2.draw();
-//
-//        Triangle3 triangle3 = new Triangle3(
-//                new Vec4(0f, -0.5f , -0.4f ),
-//                new Vec4(-1.5f, 0.5f, 2.0f),
-//                new Vec4(1.5f, 0.5f, 2.f),
-//                tr.clone(),
-//                new Vec4[] {new Vec4(1, 1,0 ), new Vec4(0, 1,1 ), new Vec4(1, 0,1 )}
-//        );
-//
-//        triangle3.draw();
-
-
-        // Масив вершин трикутників
-        Vec4[] VerticesBuffer = {
-                // передня стінка куба
-                new Vec4( -0.5f, -0.5f, -0.5f),
-                new Vec4( -0.5f, 0.5f, -0.5f),
-                new Vec4( 0.5f, 0.5f, -0.5f),
-                new Vec4( 0.5f, -0.5f, -0.5f),
-                // задня стінка куба
-                new Vec4( -0.5f, -0.5f, 0.5f),
-                new Vec4( -0.5f, 0.5f, 0.5f),
-                new Vec4( 0.5f, 0.5f, 0.5f),
-                new Vec4( 0.5f, -0.5f, 0.5f),
-        };
-
-        //масив кольорів вершин трикутників
-        Vec4[] ColorsBuffer = {
-                new Vec4( 1, 0, 0),
-                new Vec4( 0, 1, 0),
-                new Vec4( 0, 0, 1),
-                new Vec4( 1, 0, 1),
-
-                new Vec4( 1, 1, 0),
-                new Vec4( 0, 1, 1),
-                new Vec4( 1, 0, 1),
-                new Vec4( 1, 1, 1),
-        };
-
-        // масив індексів вершин для відмальовування сторін
-        int[] IndexBuffer = {
-                // передня сторона
-                0, 1, 2,
-                2, 3, 0,
-
-                // задня сторона
-                6, 5, 4,
-                4, 7, 6,
-
-                // ліва сторона
-                4, 5, 1,
-                1, 0, 4,
-
-                // права сторона
-                3, 2, 6,
-                6, 7, 3,
-
-                // верхня сторона
-                1, 5, 6,
-                6, 2, 1,
-
-                // нижня сторона
-                4, 0, 3,
-                3, 7, 4,
-        };
-
-        for (int i = 0; i < IndexBuffer.length; i+= 3) {
-            new Triangle3(
-                    VerticesBuffer[IndexBuffer[i]],
-                    VerticesBuffer[IndexBuffer[i + 1]],
-                    VerticesBuffer[IndexBuffer[i + 2]],
-                    tr.clone(),
-                    new Vec4[] {ColorsBuffer[IndexBuffer[i]], ColorsBuffer[IndexBuffer[i + 1]], ColorsBuffer[IndexBuffer[i + 2]]}
-            ).draw();
+        // Рух камери в відповідності до натисненої кнопки
+        if (GlobalState.IsUp) {
+            GlobalState.camera.Position.add(
+                    Vec4.mult(GlobalState.camera.Direction,time * GlobalState.Speed));
+        }
+        if (GlobalState.IsRight) {
+            GlobalState.camera.Position.add(
+                    GlobalState.camera.right().mult(
+                            time * GlobalState.Speed));
+        }
+        if (GlobalState.IsLeft) {
+            GlobalState.camera.Position.sub(
+                    GlobalState.camera.right().mult(
+                            time * GlobalState.Speed));
+        }
+        if (GlobalState.IsDown) {
+            GlobalState.camera.Position.sub(
+                    Vec4.mult(GlobalState.camera.Direction,time * GlobalState.Speed));
         }
 
+
+
+        Matrix4 tr =  Matrix4.scaleMatrix4(1, 1, 1).mult(
+                Matrix4.rotationMatrix4(GlobalState.Time * 100, GlobalState.Time * 100, GlobalState.Time * 100)
+        ).mult(
+                Matrix4.translationMatrix4(0, 0, 2).mult( GlobalState.camera.getCameraTransform())
+        );
+
+        for (int i = 0; i < GlobalState.Objects.size(); i++) {
+            GlobalState.Objects.get(i).draw(tr);
+        }
 
     }
 

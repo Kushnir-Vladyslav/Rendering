@@ -1,3 +1,6 @@
+import java.util.Objects;
+import java.util.Vector;
+
 public class GlobalState {
     //початковий розмір вікна, може змінюватись користувачем
     private static int ScreenWidth = 400;
@@ -11,6 +14,21 @@ public class GlobalState {
 
     //Час від початку запуску програми
     public static float Time = 0.f;
+
+    // обєскти які потрібно мулювати
+    public static Vector<DrawableObject> Objects = new Vector<>();
+
+    // швидкість преміщення
+    public static float Speed = 1.f;
+
+    // Камера
+    public static Camera camera = new Camera();
+
+    //натисненні клавіші
+    public static boolean IsUp = false;
+    public static boolean IsLeft = false;
+    public static boolean IsRight = false;
+    public static boolean IsDown = false;
 
     public static int getScreenWidth() {
         return ScreenWidth;

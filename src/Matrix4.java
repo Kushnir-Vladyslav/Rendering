@@ -19,6 +19,7 @@ public class Matrix4 {
         );
     }
 
+    // матриця зміни розміру
     public static Matrix4 scaleMatrix4 (float X, float Y, float Z){
         return new Matrix4(
                 new Vec4(X, 0f, 0f, 0f),
@@ -27,7 +28,11 @@ public class Matrix4 {
                 new Vec4(0f, 0f, 0f, 1f)
         );
     }
+    public static Matrix4 scaleMatrix4 (Vec4 Vector){
+        return scaleMatrix4(Vector.x(), Vector.y(),Vector.z());
+    }
 
+    // матриця преміщення
     public static Matrix4 translationMatrix4 (float X, float Y, float Z){
         return new Matrix4(
                 new Vec4(1f, 0f, 0f, 0f),
@@ -37,6 +42,11 @@ public class Matrix4 {
         );
     }
 
+    public static Matrix4 translationMatrix4 (Vec4 Vector){
+        return translationMatrix4(Vector.x(), Vector.y(),Vector.z());
+    }
+
+    // матриця обертання
     // x, y, z це кути
     public static Matrix4 rotationMatrix4 (float X, float Y, float Z){
         Matrix4 RotationX = new Matrix4(
@@ -61,6 +71,10 @@ public class Matrix4 {
         );
 
         return RotationZ.mult(RotationY).mult(RotationX);
+    }
+
+    public static Matrix4 rotationMatrix4 (Vec4 Vector){
+        return rotationMatrix4(Vector.x(), Vector.y(),Vector.z());
     }
 
     @Override

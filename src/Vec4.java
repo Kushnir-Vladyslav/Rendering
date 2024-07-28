@@ -61,6 +61,30 @@ public class Vec4 {
         return this;
     }
 
+    public Vec4 sub (float x, float y, float z, float w) {
+        this.x -= x;
+        this.y -= y;
+        this.z -= z;
+        this.w -= w;
+        return this;
+    }
+
+    public Vec4 sub (Vec4 other) {
+        this.x -= other.x;
+        this.y -= other.y;
+        this.z -= other.z;
+        this.w -= other.w;
+        return this;
+    }
+
+    public Vec4 negative () {
+        return new Vec4(
+                -this.x,
+                -this.y,
+                -this.z
+        );
+    }
+
     static public Vec4 add (Vec4 First, Vec4 Second) {
         return new Vec4(First.x + Second.x,
                 First.y + Second.y,
