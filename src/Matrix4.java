@@ -10,6 +10,15 @@ public class Matrix4 {
         V = new Vec4[] {A.clone(), B.clone(), C.clone(), D.clone()};
     }
 
+    static public Matrix4 transposedNormalizedMatrix (Vec4 Right, Vec4 Up, Vec4 LookAt) {
+        return new Matrix4(
+                new Vec4(Right.x(), Up.x(), LookAt.x(), 0f),
+                new Vec4(Right.y(), Up.y(), LookAt.y(), 0f),
+                new Vec4(Right.z(), Up.z(), LookAt.z(), 0f),
+                new Vec4(0f, 0f, 0f, 1f)
+        );
+    }
+
     public static Matrix4 identityMatrix4 (){
         return new Matrix4(
                 new Vec4(1f, 0f, 0f, 0f),

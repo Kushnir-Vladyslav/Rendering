@@ -20,6 +20,14 @@ public class Vec2 {
         return this.y;
     }
 
+    public void x (float X) {
+        this.x = X;
+    }
+
+    public void y (float Y) {
+        this.y = Y;
+    }
+
     public Vec2 add (Vec2 other) {
         this.x += other.x;
         this.y += other.y;

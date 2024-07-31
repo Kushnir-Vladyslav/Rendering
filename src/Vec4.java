@@ -69,6 +69,7 @@ public class Vec4 {
         return this;
     }
 
+    //змінює знак всіх змінних
     public Vec4 sub (Vec4 other) {
         this.x -= other.x;
         this.y -= other.y;
@@ -83,6 +84,32 @@ public class Vec4 {
                 -this.y,
                 -this.z
         );
+    }
+
+    // довжина вектору
+    public float length () {
+        return (float) Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
+    }
+
+    // нормалізація вектору
+    public Vec4 normalize () {
+        float Length = this.length();
+
+        this.x /= Length;
+        this.y /= Length;
+        this.z /= Length;
+
+        return this;
+    }
+
+    static public Vec4 normalize (Vec4 Vector) {
+        float Length = Vector.length();
+
+        float X = Vector.x() / Length;
+        float Y = Vector.y() / Length;
+        float Z = Vector.z() / Length;
+
+        return new Vec4(X, Y, Z);
     }
 
     static public Vec4 add (Vec4 First, Vec4 Second) {

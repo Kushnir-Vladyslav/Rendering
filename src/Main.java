@@ -1,3 +1,4 @@
+import com.sun.javafx.iio.gif.GIFImageLoader2;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -5,6 +6,7 @@ import javafx.scene.image.PixelFormat;
 import javafx.scene.input.KeyCode;
 import javafx.scene.image.WritableImage;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -121,6 +123,24 @@ public class Main extends Application {
             }
         });
 
+        //Обробка натискання лівої кнопки миші і руху
+        scene.setOnMousePressed((event) -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                GlobalState.camera.MousePressed(
+                        (float) event.getX() / GlobalState.getScreenWidth(),
+                        (float) event.getY() / GlobalState.getScreenHeight());
+            }
+        });
+
+        scene.setOnMouseDragged((event) -> {
+            if (event.isPrimaryButtonDown()) {
+                GlobalState.camera.MouseMoved(
+                        (float) event.getX() / GlobalState.getScreenWidth(),
+                        (float) event.getY() / GlobalState.getScreenHeight());
+            }
+        });
+
+
         //запуск таймеру для анімації
         AnimationTimer animationTimer = new AnimationTimer() {
             private long last = 0;
@@ -165,7 +185,8 @@ public class Main extends Application {
         // Рух камери в відповідності до натисненої кнопки
         if (GlobalState.IsUp) {
             GlobalState.camera.Position.add(
-                    Vec4.mult(GlobalState.camera.Direction,time * GlobalState.Speed));
+                    GlobalState.camera.lookAt().mult(
+                            time * GlobalState.Speed));
         }
         if (GlobalState.IsRight) {
             GlobalState.camera.Position.add(
@@ -179,7 +200,8 @@ public class Main extends Application {
         }
         if (GlobalState.IsDown) {
             GlobalState.camera.Position.sub(
-                    Vec4.mult(GlobalState.camera.Direction,time * GlobalState.Speed));
+                    GlobalState.camera.lookAt().mult(
+                            time * GlobalState.Speed));
         }
 
 
