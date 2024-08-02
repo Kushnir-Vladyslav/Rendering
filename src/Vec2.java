@@ -12,6 +12,7 @@ public class Vec2 {
         this.y = y;
     }
 
+    //блок сетерів і гетерів
     public float x () {
         return this.x;
     }
@@ -83,6 +84,8 @@ public class Vec2 {
     }
 
     //функція для малювання точки в кординатах відповідному цьому вектору
+    //використовувалась при написанні коду
+    @Deprecated
     public void draw (int color) {
         if (this.x >= 0 && this.x < GlobalState.getScreenWidth() &&
         this.y >= 0 && this.y < GlobalState.getScreenHeight()) {

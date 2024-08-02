@@ -32,23 +32,20 @@ public class Triangle3 {
         return new Vec2(0);
     }
 
-    public Vec3 getPoint3 (int num) {
-        if (num == 0) return Point1.toVec3();
-        if (num == 1) return Point2.toVec3();
-        if (num == 2) return Point3.toVec3();
-        return new Vec3(0);
-    }
-
     //малювання трикутника заповнюючи його одним певним кольором
     public void draw () {
         Vec4 TransformPoint1 = Transforms.mult(Point1);
         Vec4 TransformPoint2 = Transforms.mult(Point2);
         Vec4 TransformPoint3 = Transforms.mult(Point3);
 
+        TransformPoint1.div(TransformPoint1.w());
+        TransformPoint2.div(TransformPoint2.w());
+        TransformPoint3.div(TransformPoint3.w());
+
         // Проектування точок на екран
-        Vec2 ProjectionPoint1 = TransformPoint1.Perspective();
-        Vec2 ProjectionPoint2 = TransformPoint2.Perspective();
-        Vec2 ProjectionPoint3 = TransformPoint3.Perspective();
+        Vec2 ProjectionPoint1 = TransformPoint1.NdcToPixels();
+        Vec2 ProjectionPoint2 = TransformPoint2.NdcToPixels();
+        Vec2 ProjectionPoint3 = TransformPoint3.NdcToPixels();
 
         //визначення меж в якому розташований трикутник
         //Пошук області в якій розташовано трикутник
@@ -107,9 +104,9 @@ public class Triangle3 {
                     float T3 = -LengthVectorProduct1 / baryCentricDiv;
 
                     //глибина пікселя
-                    float Depth = T1 / TransformPoint1.z() + T2 / TransformPoint2.z() + T3 / TransformPoint3.z();
+                    float Depth = T1 * TransformPoint1.z() + T2 * TransformPoint2.z() + T3 * TransformPoint3.z();
 
-                    if (Depth > GlobalState.DepthBuffer[PixelID]) {
+                    if (Depth >= 0 && Depth <= 1f && Depth < GlobalState.DepthBuffer[PixelID]) {
                         // розраховуємо вклад кожного з кольорів в колір точки
                         Vec4 NewColorPart1 = Vec4.mult(Colors[0], T1);
                         Vec4 NewColorPart2 = Vec4.mult(Colors[1], T2);
@@ -126,6 +123,7 @@ public class Triangle3 {
             }
         }
 
+        //стара функція яка створювала проектований трикутник, і потім викликала його малювання
 //        new Triangle2(TransformPoint1.Perspective(), TransformPoint2.Perspective(), TransformPoint3.Perspective(),
 //                Colors,
 //                new float[] {TransformPoint1.z(), TransformPoint2.z(), TransformPoint3.z()}).draw();

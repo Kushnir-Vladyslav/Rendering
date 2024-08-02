@@ -22,22 +22,11 @@ public class Vec4 {
         this.w = w;
     }
 
-    public Vec4 (Vec3 V) {
-        this.x = V.x();
-        this.y = V.y();
-        this.z = V.z();
-        this.w = 1;
-    }
-
     public Vec4 (float x, float y, float z) {
         this.x = x;
         this.y = y;
         this.z = z;
         this.w = 1;
-    }
-
-    public Vec3 toVec3 () {
-        return new Vec3(this.x, this.y, this.z);
     }
 
     @Override
@@ -132,6 +121,18 @@ public class Vec4 {
         return new Vec4(vector.x * num, vector.y * num, vector.z * num, vector.w * num);
     }
 
+    public Vec4 div (float num) {
+        this.x /= num;
+        this.y /= num;
+        this.z /= num;
+        this.w /= num;
+        return this;
+    }
+
+    public static Vec4 div (Vec4 vector, float num) {
+        return new Vec4(vector.x / num, vector.y / num, vector.z / num, vector.w / num);
+    }
+
     //для використання його як вектора та кординат чотирьох вимірного точки
     public float x () {
         return this.x;
@@ -167,8 +168,18 @@ public class Vec4 {
     }
 
     //проектування трьовимірної точки на двовимірну площину екрану
+    //використовувалась, до введення матриці перспективи
+    //її замінила функція "NdcToPixels"
+    @Deprecated
     public Vec2 Perspective () {
         Vec2 result = new Vec2(this.x / this.z, -this.y / this.z);
+        result.add(new Vec2(1, 1)).mult(0.5f);
+        return result.mult(new Vec2(GlobalState.getScreenWidth(), GlobalState.getScreenHeight()));
+    }
+
+    //проектування трьовимірної точки на двовимірну площину екрану
+    public Vec2 NdcToPixels () {
+        Vec2 result = new Vec2(this.x, -this.y);
         result.add(new Vec2(1, 1)).mult(0.5f);
         return result.mult(new Vec2(GlobalState.getScreenWidth(), GlobalState.getScreenHeight()));
     }

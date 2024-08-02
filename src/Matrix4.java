@@ -1,4 +1,4 @@
-import java.rmi.MarshalException;
+
 
 public class Matrix4 {
 
@@ -10,12 +10,28 @@ public class Matrix4 {
         V = new Vec4[] {A.clone(), B.clone(), C.clone(), D.clone()};
     }
 
+    //творення транспонованої (оберненної) матриці, з одиничнихх векторів
     static public Matrix4 transposedNormalizedMatrix (Vec4 Right, Vec4 Up, Vec4 LookAt) {
         return new Matrix4(
                 new Vec4(Right.x(), Up.x(), LookAt.x(), 0f),
                 new Vec4(Right.y(), Up.y(), LookAt.y(), 0f),
                 new Vec4(Right.z(), Up.z(), LookAt.z(), 0f),
                 new Vec4(0f, 0f, 0f, 1f)
+        );
+    }
+
+    //матриця проекції, що відповідає за кут огляду та правельне відображення при різних пропорція екрану
+    static public Matrix4 PerspectiveMatrix (float ViewAngle, float AspectRatio, float NeatZ, float FarZ) {
+        float R1С1 = 1.f / (AspectRatio * (float) Math.tan(Math.toRadians(ViewAngle) / 2));
+        float R2С2 = 1.f /  (float) Math.tan(Math.toRadians(ViewAngle) / 2);
+        float R3C3 = -FarZ / (NeatZ - FarZ);
+        float R4C3 = NeatZ * FarZ / (NeatZ - FarZ);
+
+        return new Matrix4(
+                new Vec4(R1С1, 0f, 0f, 0f),
+                new Vec4(0f, R2С2, 0f, 0f),
+                new Vec4(0f, 0f, R3C3, 1f),
+                new Vec4(0f, 0f, R4C3, 0f)
         );
     }
 
