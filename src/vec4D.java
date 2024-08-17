@@ -1,28 +1,24 @@
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
-import static java.lang.Math.toRadians;
-
-public class Vec4 {
+public class vec4D {
     private float x;
     private float y;
     private float z;
     private float w;
 
-    public Vec4 (float num) {
+    public vec4D(float num) {
         this.x = num;
         this.y = num;
         this.z = num;
         this.w = num;
     }
 
-    public Vec4 (float x, float y, float z, float w) {
+    public vec4D(float x, float y, float z, float w) {
         this.x = x;
         this.y = y;
         this.z = z;
         this.w = w;
     }
 
-    public Vec4 (float x, float y, float z) {
+    public vec4D(float x, float y, float z) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -30,11 +26,11 @@ public class Vec4 {
     }
 
     @Override
-    public Vec4 clone () {
-        return new Vec4(x, y, z, w);
+    public vec4D clone () {
+        return new vec4D(x, y, z, w);
     }
 
-    public Vec4 add (float x, float y, float z, float w) {
+    public vec4D add (float x, float y, float z, float w) {
         this.x += x;
         this.y += y;
         this.z += z;
@@ -42,7 +38,7 @@ public class Vec4 {
         return this;
     }
 
-    public Vec4 add (Vec4 other) {
+    public vec4D add (vec4D other) {
         this.x += other.x;
         this.y += other.y;
         this.z += other.z;
@@ -50,7 +46,7 @@ public class Vec4 {
         return this;
     }
 
-    public Vec4 sub (float x, float y, float z, float w) {
+    public vec4D sub (float x, float y, float z, float w) {
         this.x -= x;
         this.y -= y;
         this.z -= z;
@@ -59,7 +55,7 @@ public class Vec4 {
     }
 
     //змінює знак всіх змінних
-    public Vec4 sub (Vec4 other) {
+    public vec4D sub (vec4D other) {
         this.x -= other.x;
         this.y -= other.y;
         this.z -= other.z;
@@ -67,8 +63,8 @@ public class Vec4 {
         return this;
     }
 
-    public Vec4 negative () {
-        return new Vec4(
+    public vec4D negative () {
+        return new vec4D(
                 -this.x,
                 -this.y,
                 -this.z
@@ -81,7 +77,7 @@ public class Vec4 {
     }
 
     // нормалізація вектору
-    public Vec4 normalize () {
+    public vec4D normalize () {
         float Length = this.length();
 
         this.x /= Length;
@@ -91,25 +87,25 @@ public class Vec4 {
         return this;
     }
 
-    static public Vec4 normalize (Vec4 Vector) {
+    static public vec4D normalize (vec4D Vector) {
         float Length = Vector.length();
 
         float X = Vector.x() / Length;
         float Y = Vector.y() / Length;
         float Z = Vector.z() / Length;
 
-        return new Vec4(X, Y, Z);
+        return new vec4D(X, Y, Z);
     }
 
-    static public Vec4 add (Vec4 First, Vec4 Second) {
-        return new Vec4(First.x + Second.x,
+    static public vec4D add (vec4D First, vec4D Second) {
+        return new vec4D(First.x + Second.x,
                 First.y + Second.y,
                 First.z + Second.z,
                 First.w + Second.w
         );
     }
 
-    public Vec4 mult (float num) {
+    public vec4D mult (float num) {
         this.x *= num;
         this.y *= num;
         this.z *= num;
@@ -117,11 +113,11 @@ public class Vec4 {
         return this;
     }
 
-    public static Vec4 mult (Vec4 vector, float num) {
-        return new Vec4(vector.x * num, vector.y * num, vector.z * num, vector.w * num);
+    public static vec4D mult (vec4D vector, float num) {
+        return new vec4D(vector.x * num, vector.y * num, vector.z * num, vector.w * num);
     }
 
-    public Vec4 div (float num) {
+    public vec4D div (float num) {
         this.x /= num;
         this.y /= num;
         this.z /= num;
@@ -129,8 +125,15 @@ public class Vec4 {
         return this;
     }
 
-    public static Vec4 div (Vec4 vector, float num) {
-        return new Vec4(vector.x / num, vector.y / num, vector.z / num, vector.w / num);
+    public vec4D div3D(float num) {
+        this.x /= num;
+        this.y /= num;
+        this.z /= num;
+        return this;
+    }
+
+    public static vec4D div3D(vec4D vector, float num) {
+        return new vec4D(vector.x / num, vector.y / num, vector.z / num, vector.w / num);
     }
 
     //для використання його як вектора та кординат чотирьох вимірного точки
@@ -171,17 +174,17 @@ public class Vec4 {
     //використовувалась, до введення матриці перспективи
     //її замінила функція "NdcToPixels"
     @Deprecated
-    public Vec2 Perspective () {
-        Vec2 result = new Vec2(this.x / this.z, -this.y / this.z);
-        result.add(new Vec2(1, 1)).mult(0.5f);
-        return result.mult(new Vec2(GlobalState.getScreenWidth(), GlobalState.getScreenHeight()));
+    public vec2D Perspective () {
+        vec2D result = new vec2D(this.x / this.z, -this.y / this.z);
+        result.add(new vec2D(1, 1)).mult(0.5f);
+        return result.mult(new vec2D(GlobalState.getScreenWidth(), GlobalState.getScreenHeight()));
     }
 
     //проектування трьовимірної точки на двовимірну площину екрану
-    public Vec2 NdcToPixels () {
-        Vec2 result = new Vec2(this.x, -this.y);
-        result.add(new Vec2(1, 1)).mult(0.5f);
-        return result.mult(new Vec2(GlobalState.getScreenWidth(), GlobalState.getScreenHeight()));
+    public vec2D NdcToPixels () {
+        vec2D result = new vec2D(this.x, -this.y);
+        result.add(new vec2D(1, 1)).mult(0.5f);
+        return result.mult(new vec2D(GlobalState.getScreenWidth(), GlobalState.getScreenHeight()));
     }
 
     //функція для  проектування та малювання точки в кординатах відповідному цьому вектору

@@ -1,27 +1,30 @@
-public class DrawableObject {
+//Використовувася для відмальовування трикутників з заданими кольорами на вершинах
+//після додванання тестур застарів
+@Deprecated
+public class drawableObjectSmoothColor {
     // Масив вершин трикутників
-    private Vec4[] VerticesBuffer;
+    private vec4D[] VerticesBuffer;
 
     //масив кольорів вершин трикутників
-    private Vec4[] ColorsBuffer;
+    private vec4D[] ColorsBuffer;
 
     // масив індексів вершин для відмальовування сторін
     private int[] IndexBuffer;
 
-    DrawableObject(Vec4[] VerticesBuffer, Vec4[] ColorsBuffer, int[] IndexBuffer) {
+    drawableObjectSmoothColor(vec4D[] VerticesBuffer, vec4D[] ColorsBuffer, int[] IndexBuffer) {
         this.VerticesBuffer = VerticesBuffer;
         this.ColorsBuffer = ColorsBuffer;
         this.IndexBuffer = IndexBuffer;
     }
 
-    public void draw (Matrix4 tr) {
+    public void draw (matrix4D tr) {
         for (int i = 0; i < IndexBuffer.length; i+= 3) {
-            new Triangle3(
+            new triangle3DSmoothColor(
                     VerticesBuffer[IndexBuffer[i]],
                     VerticesBuffer[IndexBuffer[i + 1]],
                     VerticesBuffer[IndexBuffer[i + 2]],
                     tr.clone(),
-                    new Vec4[] {ColorsBuffer[IndexBuffer[i]], ColorsBuffer[IndexBuffer[i + 1]], ColorsBuffer[IndexBuffer[i + 2]]}
+                    new vec4D[] {ColorsBuffer[IndexBuffer[i]], ColorsBuffer[IndexBuffer[i + 1]], ColorsBuffer[IndexBuffer[i + 2]]}
             ).draw();
         }
     }

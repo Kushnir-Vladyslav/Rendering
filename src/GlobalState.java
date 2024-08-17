@@ -1,4 +1,3 @@
-import java.util.Objects;
 import java.util.Vector;
 
 public class GlobalState {
@@ -16,13 +15,13 @@ public class GlobalState {
     public static float Time = 0.f;
 
     // обєскти які потрібно мулювати
-    public static Vector<DrawableObject> Objects = new Vector<>();
+    public static Vector<drawableObject> Objects = new Vector<>();
 
     // швидкість преміщення
     public static float Speed = 1.f;
 
     // Камера
-    public static Camera camera = new Camera();
+    public static camera camera = new camera();
 
     //натисненні клавіші
     public static boolean IsUp = false;

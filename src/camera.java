@@ -1,54 +1,54 @@
-public class Camera {
-    public Vec4 Position;
-    public Matrix4 Direction = Matrix4.identityMatrix4();
+public class camera {
+    public vec4D Position;
+    public matrix4D Direction = matrix4D.identityMatrix4();
 
-    public Vec4 Right = new Vec4(1, 0, 0);
-    public Vec4 LookAt = new Vec4(0, 0, 1);
+    public vec4D Right = new vec4D(1, 0, 0);
+    public vec4D LookAt = new vec4D(0, 0, 1);
 
-    private Vec2 PreviousMousePosition = new Vec2(0.f, 0.f);
+    private vec2D PreviousMousePosition = new vec2D(0.f, 0.f);
 
     private float Yaw = 0.f;
     private float Pitch = 0.f;
 
     //параметри дял перспективи
-    public Matrix4 PerspectiveMatrix;
+    public matrix4D PerspectiveMatrix;
 
-    public float ViewAngle = 120;
+    public float ViewAngle = 60;
     public float NeatZ = 0.05f;
-    public float FarZ = 2f;
+    public float FarZ = 1000f;
 
-    Camera () {
-        this.Position = new Vec4(0, 0, 1);
+    camera() {
+        this.Position = new vec4D(0, 0, 1);
         this.updatePerspective();
     }
 
-    Camera (Vec4 Position, float Yaw, float Pitch) {
+    camera(vec4D Position, float Yaw, float Pitch) {
         this.Position = Position;
         this.Yaw = Yaw;
         this.Pitch = Pitch;
         updatePerspective();
     }
 
-    public Vec4 right() {
+    public vec4D right() {
         return Right.clone();
     }
 
-    public Vec4 lookAt() {
+    public vec4D lookAt() {
         return LookAt.clone();
     }
 
     //трасформація камери, преміщення та обертання
-    public Matrix4 getCameraMoving () {
-        return Matrix4.translationMatrix4(Position.negative());
+    public matrix4D getCameraMoving () {
+        return matrix4D.translationMatrix4(Position.negative());
     }
 
-    public Matrix4 getCameraRotation () {
+    public matrix4D getCameraRotation () {
         return Direction.clone();
     }
 
     //сумарна трансформація камери, послідовність: обертання, переміщення
-    public Matrix4 getCameraTransform () {
-        return Matrix4.mult(Direction, getCameraMoving());
+    public matrix4D getCameraTransform () {
+        return matrix4D.mult(Direction, getCameraMoving());
     }
 
     //перспектива
@@ -74,11 +74,11 @@ public class Camera {
     //Оновлення матриці перспективи
     public void updatePerspective () {
         float AcpectRatio = (float) GlobalState.getScreenWidth() / (float) GlobalState.getScreenHeight();
-        this.PerspectiveMatrix = Matrix4.PerspectiveMatrix(ViewAngle, AcpectRatio, NeatZ, FarZ);
+        this.PerspectiveMatrix = matrix4D.PerspectiveMatrix(ViewAngle, AcpectRatio, NeatZ, FarZ);
     }
 
     //повернення матриці перспективи
-    public Matrix4 getPerspectiveMatrix () {
+    public matrix4D getPerspectiveMatrix () {
         return this.PerspectiveMatrix;
     }
 
@@ -99,18 +99,17 @@ public class Camera {
 
     //Створненя матриці офертання всіх обєктів в координатах світу в відповідності до повороту камери
     private void updateDirection () {
-        Matrix4 YawTransform = Matrix4.rotationMatrix4( 0, Yaw, 0);
-        Matrix4 PitchTransform = Matrix4.rotationMatrix4( Pitch, 0, 0);
-//        Matrix4 CameraTransform = PitchTransform.mult(YawTransform);
-        Matrix4 CameraTransform = YawTransform.mult(PitchTransform);
+        matrix4D YawTransform = matrix4D.rotationMatrix4( 0, Yaw, 0);
+        matrix4D PitchTransform = matrix4D.rotationMatrix4( Pitch, 0, 0);
+        matrix4D CameraTransform = PitchTransform.mult(YawTransform);
 
         //змінні "Right" та "LookAt" отрібні для руху камерри в правельному напрму
         //в фкнкції що відповідає за зміщення при натисканні клавіш
-        this.Right = Matrix4.mult(CameraTransform, new Vec4(1, 0, 0, 0)).normalize();
-        Vec4 Up = Matrix4.mult(CameraTransform, new Vec4(0, 1, 0, 0)).normalize();
-        this.LookAt = Matrix4.mult(CameraTransform, new Vec4(0, 0, 1, 0)).normalize();
+        this.Right = matrix4D.mult(CameraTransform, new vec4D(1, 0, 0, 0)).normalize();
+        vec4D Up = matrix4D.mult(CameraTransform, new vec4D(0, 1, 0, 0)).normalize();
+        this.LookAt = matrix4D.mult(CameraTransform, new vec4D(0, 0, 1, 0)).normalize();
 
-        Direction = Matrix4.transposedNormalizedMatrix(this.Right, Up, this.LookAt);
+        Direction = matrix4D.transposedNormalizedMatrix(this.Right, Up, this.LookAt);
     }
 
 }

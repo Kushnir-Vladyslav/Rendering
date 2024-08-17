@@ -1,13 +1,13 @@
-public class Vec2 {
+public class vec2D {
     private float x;
     private float y;
 
-    public Vec2 (float num) {
+    public vec2D(float num) {
         this.x = num;
         this.y = num;
     }
 
-    public Vec2 (float x, float y) {
+    public vec2D(float x, float y) {
         this.x = x;
         this.y = y;
     }
@@ -29,55 +29,59 @@ public class Vec2 {
         this.y = Y;
     }
 
-    public Vec2 add (Vec2 other) {
+    public vec2D add (vec2D other) {
         this.x += other.x;
         this.y += other.y;
         return this;
     }
 
-    public Vec2 add (float x, float y) {
+    public vec2D add (float x, float y) {
         this.x += x;
         this.y += y;
         return this;
     }
 
-    public static Vec2 add (Vec2 first, Vec2 second) {
-       return new Vec2(first.x + second.x, first.y + second.y);
+    public static vec2D add (vec2D first, vec2D second) {
+       return new vec2D(first.x + second.x, first.y + second.y);
     }
 
-    public Vec2 sub (Vec2 other) {
+    public vec2D sub (vec2D other) {
         this.x -= other.x;
         this.y -= other.y;
         return this;
     }
 
-    public Vec2 sub (float x, float y) {
+    public vec2D sub (float x, float y) {
         this.x -= x;
         this.y -= y;
         return this;
     }
 
-    public static Vec2 sub (Vec2 first, Vec2 second) {
-        return new Vec2(first.x - second.x, first.y - second.y);
+    public static vec2D sub (vec2D first, vec2D second) {
+        return new vec2D(first.x - second.x, first.y - second.y);
     }
 
-    public Vec2 mult (Vec2 other) {
+    public vec2D mult (vec2D other) {
         this.x *= other.x;
         this.y *= other.y;
         return this;
     }
 
-    public Vec2 mult (float num) {
+    public vec2D mult (float num) {
         this.x *= num;
         this.y *= num;
         return this;
     }
 
-    public static Vec2 mult (Vec2 first, Vec2 second) {
-        return new Vec2(first.x * second.x, first.y * second.y);
+    public static vec2D mult (vec2D first, vec2D second) {
+        return new vec2D(first.x * second.x, first.y * second.y);
     }
 
-    public Vec2 div (float num) {
+    public static vec2D mult (vec2D first, float num) {
+        return new vec2D(first.x * num, first.y * num);
+    }
+
+    public vec2D div (float num) {
         this.x /= num;
         this.y /= num;
         return this;
