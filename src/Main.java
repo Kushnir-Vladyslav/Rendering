@@ -194,6 +194,29 @@ public class Main extends Application {
 //));
 
 
+//        GlobalState.Objects.add(new drawableObject(
+//                // Масив вершин трикутників
+//                new vec4D[] {
+//                        // передня стінка куба
+//                        new vec4D( -0.5f, -0.5f, -0.5f),
+//                        new vec4D( -0.5f, 0.5f, -0.5f),
+//                        new vec4D( 0.5f, 0.5f, -0.5f),
+//                },
+//                //масив вершин на текстурі
+//                new vec2D[] {
+//                        new vec2D( 0, 0),
+//                        new vec2D( 1, 0),
+//                        new vec2D( 1, 1),
+//
+//                },
+//                // масив індексів вершин для відмальовування сторін
+//                new int[] {
+//                        // передня сторона
+//                        0, 1, 2
+//                },
+//                new texture()
+//        ));
+
 
         //обробники подій зміни розміру вікна
         scene.widthProperty().addListener((observable, oldValue, newValue) -> {

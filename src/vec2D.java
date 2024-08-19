@@ -12,6 +12,11 @@ public class vec2D {
         this.y = y;
     }
 
+    @Override
+    public vec2D clone () {
+        return new vec2D(x, y);
+    }
+
     //блок сетерів і гетерів
     public float x () {
         return this.x;

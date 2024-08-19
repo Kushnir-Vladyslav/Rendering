@@ -20,7 +20,7 @@ public class drawableObject {
 
     public void draw (matrix4D tr) {
         for (int i = 0; i < IndexBuffer.length; i+= 3) {
-            new triangle3D(
+            new DrawTriangle3D(
                     new vec4D[] {VerticesBuffer[IndexBuffer[i]],
                             VerticesBuffer[IndexBuffer[i + 1]],
                             VerticesBuffer[IndexBuffer[i + 2]]},

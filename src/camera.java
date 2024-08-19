@@ -15,7 +15,7 @@ public class camera {
 
     public float ViewAngle = 60;
     public float NeatZ = 0.05f;
-    public float FarZ = 1000f;
+    public float FarZ = 1000;
 
     camera() {
         this.Position = new vec4D(0, 0, 1);
