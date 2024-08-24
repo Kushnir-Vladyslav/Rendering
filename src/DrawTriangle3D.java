@@ -1,4 +1,3 @@
-import javafx.scene.chart.Axis;
 
 public class DrawTriangle3D {
 
@@ -189,7 +188,7 @@ public class DrawTriangle3D {
                     SecondaryTriangles[NumOfSecondaryTriangles].UvPoints[1] =
                             vec2D.mult(MainTriangles[TriangleID].UvPoints[IsInOfSight], 1f - S).add(
                                     vec2D.mult(MainTriangles[TriangleID].UvPoints[(IsInOfSight + 1) % 3], S)
-                    );
+                            );
 
 
                     //шукаємо нову точку перетину на прямі з точок що попередня і входить
@@ -233,6 +232,7 @@ public class DrawTriangle3D {
 
         NumOfMainTriangles = 1;
 
+
         //перевірка та обрізка трикутників при перетині з одною з обмежуючих площин
         for (clipAxis ClipAxis : clipAxis.values()) {
             clippingTriangle(ClipAxis);
@@ -271,28 +271,51 @@ public class DrawTriangle3D {
             vec2D Edge3 = vec2D.sub(ProjectionPoint1, ProjectionPoint3);
 
             //перевіряємо чи є ребро верхнім лівим, щоб знати чи малювати його
-            boolean isTopLeft1 = (Edge1.x() >= 0.f && Edge1.y() > 0.f) || (Edge1.x() > 0.f && Edge1.y() == 0.f);
-            boolean isTopLeft2 = (Edge2.x() >= 0.f && Edge2.y() > 0.f) || (Edge2.x() > 0.f && Edge2.y() == 0.f);
-            boolean isTopLeft3 = (Edge3.x() >= 0.f && Edge3.y() > 0.f) || (Edge3.x() > 0.f && Edge3.y() == 0.f);
+            boolean isTopLeft1 = (Edge1.y() > 0.f) || (Edge1.x() > 0.f && Edge1.y() == 0.f);
+            boolean isTopLeft2 = (Edge2.y() > 0.f) || (Edge2.x() > 0.f && Edge2.y() == 0.f);
+            boolean isTopLeft3 = (Edge3.y() > 0.f) || (Edge3.x() > 0.f && Edge3.y() == 0.f);
 
             //спільний дільник для барецентричних координат
-            float baryCentricDiv = vectorProduct(vec2D.sub(ProjectionPoint2, ProjectionPoint1), vec2D.sub(ProjectionPoint3, ProjectionPoint1));
+            //барцентричний коефіціент заміненно на обернений для заміни дорого ділення на множення в наступних операціяч
+            float ConverseBaryCentricDiv = 1.f / vectorProduct(vec2D.sub(ProjectionPoint2, ProjectionPoint1), vec2D.sub(ProjectionPoint3, ProjectionPoint1));
+
+            //розраховується обрененний коефіціент для заміни дорого ділення на множення в наступних операціях
+            float ConverseW1 = 1.f / TransformPoint1.w();
+            float ConverseW2 = 1.f / TransformPoint2.w();
+            float ConverseW3 = 1.f / TransformPoint3.w();
+
+            //наступний код винесено за межі циклу, і буде розраховувати не для кожної точки окремо,
+            //а для базової з додванням зміщення для кожної наступної точки.
+
+            //координати точки що потрпила що перевіряється
+            vec2D PixelPoint = new vec2D(minX, minY).add(0.5f, 0.5f);
+
+            //побудова векторів від кутів до точки
+            vec2D PixelVector1 = vec2D.sub(PixelPoint, ProjectionPoint1);
+            vec2D PixelVector2 = vec2D.sub(PixelPoint, ProjectionPoint2);
+            vec2D PixelVector3 = vec2D.sub(PixelPoint, ProjectionPoint3);
+
+            //довжина векторнионого добутку для вектору кожного ребра та вектору до точки
+            float BaseLengthVectorProduct1 = vectorProduct(PixelVector1, Edge1);
+            float BaseLengthVectorProduct2 = vectorProduct(PixelVector2, Edge2);
+            float BaseLengthVectorProduct3 = vectorProduct(PixelVector3, Edge3);
+
 
             //проходимо по всім пікселям по екрану та перевіряємо чи порапляють вони в трикутник
             for (int y = minY; y < maxY; y++) {
+
+                //розрахунок довжини вектрного добутку відносно базової точки на y
+                float OffsetYLengthVectorProduct1 = BaseLengthVectorProduct1 - Edge1.x() * (y - minY);
+                float OffsetYLengthVectorProduct2 = BaseLengthVectorProduct2 - Edge2.x() * (y - minY);
+                float OffsetYLengthVectorProduct3 = BaseLengthVectorProduct3 - Edge3.x() * (y - minY);
+
                 for (int x = minX; x < maxX; x++) {
-                    //координати точки що потрпила що перевіряється
-                    vec2D PixelPoint = new vec2D(x, y).add(0.5f, 0.5f);
 
-                    //побудова векторів від кутів до точки
-                    vec2D PixelVector1 = vec2D.sub(PixelPoint, ProjectionPoint1);
-                    vec2D PixelVector2 = vec2D.sub(PixelPoint, ProjectionPoint2);
-                    vec2D PixelVector3 = vec2D.sub(PixelPoint, ProjectionPoint3);
-
-                    //довжина векторнионого добутку для вектору кожного ребра та вектору до точки
-                    float LengthVectorProduct1 = vectorProduct(PixelVector1, Edge1);
-                    float LengthVectorProduct2 = vectorProduct(PixelVector2, Edge2);
-                    float LengthVectorProduct3 = vectorProduct(PixelVector3, Edge3);
+                    //Розрахунок остаточної довжини векторногодобутку вектору ребра та вектору до точки
+                    //розраховується відносно базової точки з врахуванням зміщення x та y
+                    float LengthVectorProduct1 = OffsetYLengthVectorProduct1 + Edge1.y() * (x - minX);
+                    float LengthVectorProduct2 = OffsetYLengthVectorProduct2 + Edge2.y() * (x - minX);
+                    float LengthVectorProduct3 = OffsetYLengthVectorProduct3 + Edge3.y() * (x - minX);
 
                     //перевірка чи потрапляє точка в трикутник
                     if ((LengthVectorProduct1 <= 0 || (isTopLeft1 && LengthVectorProduct1 == 0.f)) &&
@@ -302,29 +325,35 @@ public class DrawTriangle3D {
                         int PixelID = y * GlobalState.getScreenWidth() + x;
 
                         //коефіціенти для інтерполяції кольоровів/глибини в трикутнику
-                        float T1 = -LengthVectorProduct2 / baryCentricDiv;
-                        float T2 = -LengthVectorProduct3 / baryCentricDiv;
-                        float T3 = -LengthVectorProduct1 / baryCentricDiv;
+                        //заміненна дорога операція ділення на дешевшу множення
+                        float T1 = -LengthVectorProduct2 * ConverseBaryCentricDiv;
+                        float T2 = -LengthVectorProduct3 * ConverseBaryCentricDiv;
+                        float T3 = -LengthVectorProduct1 * ConverseBaryCentricDiv;
 
                         //глибина пікселя
                         float Depth = T1 * TransformPoint1.z() + T2 * TransformPoint2.z() + T3 * TransformPoint3.z();
 
-                        if (Depth >= 0 && Depth <= 1f && Depth < GlobalState.DepthBuffer[PixelID]) {
-                            float OneOverW = T1 / TransformPoint1.w() + T2 / TransformPoint2.w() + T3 / TransformPoint3.w();
+
+                        if ( Depth < GlobalState.DepthBuffer[PixelID]) {
+                            //замінено дорогого ділення на множення
+                            //float OneOverW = T1 / TransformPoint1.w() + T2 / TransformPoint2.w() + T3 / TransformPoint3.w();
+
+                            float OneOverW = T1 * ConverseW1 + T2 * ConverseW2 + T3 * ConverseW3;
 
                             // інтерполяція положення точки в трикутнику, відносно вершин
-                            vec2D Uv1 = vec2D.mult(MainTriangles[TriangleID].UvPoints[0], T1).div(TransformPoint1.w());
-                            vec2D Uv2 = vec2D.mult(MainTriangles[TriangleID].UvPoints[1], T2).div(TransformPoint2.w());
-                            vec2D Uv3 = vec2D.mult(MainTriangles[TriangleID].UvPoints[2], T3).div(TransformPoint3.w());
+                            //замінено дороге ділення на множення
+                            //vec2D Uv1 = vec2D.mult(MainTriangles[TriangleID].UvPoints[0], T1).div(TransformPoint1.w());
+
+                            vec2D Uv1 = vec2D.mult(MainTriangles[TriangleID].UvPoints[0], T1).mult(ConverseW1);
+                            vec2D Uv2 = vec2D.mult(MainTriangles[TriangleID].UvPoints[1], T2).mult(ConverseW2);
+                            vec2D Uv3 = vec2D.mult(MainTriangles[TriangleID].UvPoints[2], T3).mult(ConverseW3);
 
                             GlobalState.Pixels[PixelID] = Texture.getColor(Uv1.add(Uv2).add(Uv3).div(OneOverW));
                             GlobalState.DepthBuffer[PixelID] = Depth;
                         }
                     }
-
                 }
             }
-
         }
     }
 

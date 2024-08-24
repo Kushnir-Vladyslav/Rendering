@@ -37,6 +37,8 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
+
+         //куб
         GlobalState.Objects.add(new drawableObject(
                 // Масив вершин трикутників
         new vec4D[] {
@@ -95,7 +97,7 @@ public class Main extends Application {
 
 //        //піраміда
 //        GlobalState.Objects.add( new drawableObject(
-//// Масив вершин трикутників
+//                // Масив вершин трикутників
 //                new vec4D[] {
 //                        // вершини основи піраміди
 //                        new vec4D(-0.5f, 0.0f, -0.5f),  // 0
@@ -105,32 +107,33 @@ public class Main extends Application {
 //                        // вершина піраміди
 //                        new vec4D(0.0f, 1.0f, 0.0f),    // 4
 //                },
-//// Масив кольорів вершин трикутників
-//                new vec4D[] {
-//                        new vec4D(1, 0, 0),
-//                        new vec4D(0, 1, 0),
-//                        new vec4D(0, 0, 1),
-//                        new vec4D(1, 1, 0),
-//                        new vec4D(1, 0, 1),
+//                // Масив кольорів вершин трикутників
+//                new vec2D[] {
+//                        new vec2D( 0, 0),
+//                        new vec2D( 1, 0),
+//                        new vec2D( 1, 1),
+//                        new vec2D( 0, 1),
+//                        new vec2D(1, 1),
 //                },
-//// Масив індексів вершин для відмальовування сторін
+//                // Масив індексів вершин для відмальовування сторін
 //                new int[] {
 //                        // основа
-//                        0, 3, 2,
-//                        2, 1, 0,
+//                        0, 2, 3,
+//                        0, 1, 2,
 //
 //                        // передня сторона
-//                        0, 1, 4,
+//                        0, 4, 1,
 //
 //                        // права сторона
-//                        1, 2, 4,
+//                        1, 4, 2,
 //
 //                        // задня сторона
-//                        2, 3, 4,
+//                        2, 4, 3,
 //
 //                        // ліва сторона
-//                        3, 0, 4,
-//                }
+//                        3, 4, 0,
+//                },
+//                new texture()
 //        ));
 
 //        // кубик Д20
@@ -151,19 +154,19 @@ public class Main extends Application {
 //                new vec4D(0, 0, -1),  // вершина 11
 //        },
 //// Масив кольорів вершин трикутників
-//                new vec4D[] {
-//                        new vec4D(1, 0, 0),
-//                        new vec4D(0, 1, 0),
-//                        new vec4D(0, 0, 1),
-//                        new vec4D(1, 1, 0),
-//                        new vec4D(1, 0, 1),
-//                        new vec4D(0, 1, 1),
-//                        new vec4D(0.5f, 0.5f, 0.5f),
-//                        new vec4D(0.75f, 0.25f, 0.75f),
-//                        new vec4D(0.25f, 0.75f, 0.25f),
-//                        new vec4D(0.5f, 0.25f, 0.75f),
-//                        new vec4D(0.75f, 0.5f, 0.25f),
-//                        new vec4D(0.25f, 0.5f, 0.75f),
+//                new vec2D[] {
+//                        new vec2D( 0, 0),
+//                        new vec2D( 1, 0),
+//                        new vec2D( 1, 1),
+//                        new vec2D( 0, 1),
+//                        new vec2D(1, 1),
+//                        new vec2D( 1, 0),
+//                        new vec2D( 0, 0),
+//                        new vec2D( 1, 0),
+//                        new vec2D( 1, 1),
+//                        new vec2D( 0, 1),
+//                        new vec2D(1, 1),
+//                        new vec2D( 1, 0),
 //                },
 //// Масив індексів вершин для відмальовування сторін
 //                new int[] {
@@ -190,10 +193,11 @@ public class Main extends Application {
 //                        8, 11, 9,
 //                        9, 11, 10,
 //                        10, 11, 6,
-//                }
+//                },
+//                new texture()
 //));
 
-
+//         //Трикутник
 //        GlobalState.Objects.add(new drawableObject(
 //                // Масив вершин трикутників
 //                new vec4D[] {
@@ -303,7 +307,7 @@ public class Main extends Application {
     private void updatePixels(float time) {
 
 
-//        System.out.println(GlobalState.Time);
+//        System.out.println(1f / GlobalState.Time);
         fillBackground(0xFF000000);
 
         float cos = (float) cos(toRadians(GlobalState.Time));

@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class drawableObject {
     // Масив вершин трикутників
     private vec4D[] VerticesBuffer;
@@ -18,6 +21,7 @@ public class drawableObject {
         this.Texture = Texture;
     }
 
+
     public void draw (matrix4D tr) {
         for (int i = 0; i < IndexBuffer.length; i+= 3) {
             new DrawTriangle3D(
@@ -32,5 +36,8 @@ public class drawableObject {
             ).draw();
         }
     }
+
+
+
 
 }
