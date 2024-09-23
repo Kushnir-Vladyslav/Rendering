@@ -1,3 +1,5 @@
+package com.my_program.rendering;
+
 public class texture {
     private int Width;
     private int Height;

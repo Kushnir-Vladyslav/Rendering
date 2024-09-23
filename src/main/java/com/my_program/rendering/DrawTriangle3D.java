@@ -1,3 +1,4 @@
+package com.my_program.rendering;
 
 public class DrawTriangle3D {
 
@@ -342,7 +343,7 @@ public class DrawTriangle3D {
 
                             // інтерполяція положення точки в трикутнику, відносно вершин
                             //замінено дороге ділення на множення
-                            //vec2D Uv1 = vec2D.mult(MainTriangles[TriangleID].UvPoints[0], T1).div(TransformPoint1.w());
+                            //com.my_program.rendering.vec2D Uv1 = com.my_program.rendering.vec2D.mult(MainTriangles[TriangleID].UvPoints[0], T1).div(TransformPoint1.w());
 
                             vec2D Uv1 = vec2D.mult(MainTriangles[TriangleID].UvPoints[0], T1).mult(ConverseW1);
                             vec2D Uv2 = vec2D.mult(MainTriangles[TriangleID].UvPoints[1], T2).mult(ConverseW2);
@@ -360,7 +361,7 @@ public class DrawTriangle3D {
 
     //перетворення вектору з кольорами в діапазоні 0 ... 1, в цілочисельне значення
     //для текстур не потрібно вираховувати колір
-    //перенесено в клас "texture"
+    //перенесено в клас "com.my_program.rendering.texture"
     @Deprecated
     private int toRGBA(vec4D Color) {
         return ((int)(Color.a() * 255) << 24) | ((int)(Color.r() * 255) << 16) | ((int)(Color.g() * 255) << 8) | (int)(Color.b() * 255);

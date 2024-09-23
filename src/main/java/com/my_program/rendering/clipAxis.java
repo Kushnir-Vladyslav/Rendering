@@ -1,3 +1,5 @@
+package com.my_program.rendering;
+
 public enum clipAxis {
     CLIP_AXIS_LEFT {
          @Override

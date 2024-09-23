@@ -1,3 +1,5 @@
+package com.my_program.rendering;
+
 // замінено на вектор розмірністю 4, який може виконувати роль 3-х мірного вектору
 @Deprecated
 public class vec3D {

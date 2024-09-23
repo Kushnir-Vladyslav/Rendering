@@ -1,3 +1,5 @@
+package com.my_program.rendering;
+
 import java.util.Vector;
 
 public class GlobalState {

@@ -1,6 +1,8 @@
+package com.my_program.rendering;
+
 //Оскільки функціонал сортування точок за часовою стріллкою не портібен,
 //оскільки пердбачається що точки відразу буддуть відсортовані,
-//весь інший функціонал пренесенов в "DrawTriangle3D" для спрощення
+//весь інший функціонал пренесенов в "com.my_program.rendering.DrawTriangle3D" для спрощення
 @Deprecated
 public class triangle2D {
     public vec2D ProjectionPoint1;

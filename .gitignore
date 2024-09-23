@@ -4,7 +4,7 @@ out/
 target/
 lib/
 !pom.xml
-!Try_FX.iml
+!Rendering.iml
 !**/src/main/**/out/
 !**/src/test/**/out/
 

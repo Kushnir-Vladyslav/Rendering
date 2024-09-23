@@ -1,3 +1,5 @@
+package com.my_program.rendering;
+
 public class camera {
     public vec4D Position;
     public matrix4D Direction = matrix4D.identityMatrix4();

@@ -1,3 +1,5 @@
+package com.my_program.rendering;
+
 public class vec2D {
     private float x;
     private float y;

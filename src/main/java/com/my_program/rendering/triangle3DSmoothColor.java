@@ -1,3 +1,5 @@
+package com.my_program.rendering;
+
 //Використовувася для відмальовування трикутників з заданими кольорами на вершинах
 //після додванання тестур застарів
 @Deprecated
@@ -127,7 +129,7 @@ public class triangle3DSmoothColor {
         }
 
         //стара функція яка створювала проектований трикутник, і потім викликала його малювання
-//        new triangle2D(TransformPoint1.Perspective(), TransformPoint2.Perspective(), TransformPoint3.Perspective(),
+//        new com.my_program.rendering.triangle2D(TransformPoint1.Perspective(), TransformPoint2.Perspective(), TransformPoint3.Perspective(),
 //                Colors,
 //                new float[] {TransformPoint1.z(), TransformPoint2.z(), TransformPoint3.z()}).draw();
     }
