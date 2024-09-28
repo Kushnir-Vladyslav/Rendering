@@ -19,7 +19,7 @@ public class texture {
     //дефолтний коструктор, створює текстуру шахової дошки
     texture () {
         int BlocSize = 8;
-        int NumBloc = 32;
+        int NumBloc = 64;
 
         this.Width = BlocSize * NumBloc;
         this.Height = BlocSize * NumBloc;
@@ -43,6 +43,13 @@ public class texture {
 
             }
         }
+    }
+
+    // створення текстури завантаженої, або створеної зовні
+    texture (int Height, int Width, int[] Texels) {
+        this.Height = Height;
+        this.Width = Width;
+        this.Texels = Texels;
     }
 
 
@@ -87,7 +94,7 @@ public class texture {
             public int getColor(texture Texture, float X, float Y) {
                 //Положення пікселяна в корддинатах техтури
                 float PointX = X * Texture.Width - 0.5f;
-                float PointY = Y * Texture.Height - 0.5f;
+                float PointY = (1 - Y) * Texture.Height - 0.5f;
 
                 //Пошук кордина найблищого теселю з ліва з низу
                 int TexelX = (int) Math.floor(PointX);

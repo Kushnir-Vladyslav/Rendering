@@ -20,7 +20,7 @@ public class GlobalState {
     public static Vector<drawableObject> Objects = new Vector<>();
 
     // швидкість преміщення
-    public static float Speed = 1.f;
+    public static float Speed = 100.f;
 
     // Камера
     public static camera camera = new camera();

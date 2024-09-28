@@ -39,63 +39,69 @@ public class runRendering extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
+        //завантаження моделі
+        try ( modelReader md = new modelReader();) {
+            md.loaderGLTF("Models/Sponza/Sponza.gltf");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
-        //куб
-        GlobalState.Objects.add(new drawableObject(
-                // Масив вершин трикутників
-                new vec4D[] {
-                        // передня стінка куба
-                        new vec4D( -0.5f, -0.5f, -0.5f),
-                        new vec4D( -0.5f, 0.5f, -0.5f),
-                        new vec4D( 0.5f, 0.5f, -0.5f),
-                        new vec4D( 0.5f, -0.5f, -0.5f),
-                        // задня стінка куба
-                        new vec4D( -0.5f, -0.5f, 0.5f),
-                        new vec4D( -0.5f, 0.5f, 0.5f),
-                        new vec4D( 0.5f, 0.5f, 0.5f),
-                        new vec4D( 0.5f, -0.5f, 0.5f),
-                },
-                //масив вершин на текстурі
-                new vec2D[] {
-                        new vec2D( 0, 0),
-                        new vec2D( 1, 0),
-                        new vec2D( 1, 1),
-                        new vec2D( 0, 1),
-
-                        new vec2D( 0, 0),
-                        new vec2D( 1, 0),
-                        new vec2D( 1, 1),
-                        new vec2D( 0, 1),
-
-                },
-                // масив індексів вершин для відмальовування сторін
-                new int[] {
-                        // передня сторона
-                        0, 1, 2,
-                        2, 3, 0,
-
-                        // задня сторона
-                        6, 5, 4,
-                        4, 7, 6,
-
-                        // ліва сторона
-                        4, 5, 1,
-                        1, 0, 4,
-
-                        // права сторона
-                        3, 2, 6,
-                        6, 7, 3,
-
-                        // верхня сторона
-                        1, 5, 6,
-                        6, 2, 1,
-
-                        // нижня сторона
-                        4, 0, 3,
-                        3, 7, 4,
-                },
-                new texture()
-        ));
+//        //куб
+//        GlobalState.Objects.add(new drawableObject(
+//                // Масив вершин трикутників
+//                new vec4D[] {
+//                        // передня стінка куба
+//                        new vec4D( -0.5f, -0.5f, -0.5f),
+//                        new vec4D( -0.5f, 0.5f, -0.5f),
+//                        new vec4D( 0.5f, 0.5f, -0.5f),
+//                        new vec4D( 0.5f, -0.5f, -0.5f),
+//                        // задня стінка куба
+//                        new vec4D( -0.5f, -0.5f, 0.5f),
+//                        new vec4D( -0.5f, 0.5f, 0.5f),
+//                        new vec4D( 0.5f, 0.5f, 0.5f),
+//                        new vec4D( 0.5f, -0.5f, 0.5f),
+//                },
+//                //масив вершин на текстурі
+//                new vec2D[] {
+//                        new vec2D( 0, 0),
+//                        new vec2D( 1, 0),
+//                        new vec2D( 1, 1),
+//                        new vec2D( 0, 1),
+//
+//                        new vec2D( 0, 0),
+//                        new vec2D( 1, 0),
+//                        new vec2D( 1, 1),
+//                        new vec2D( 0, 1),
+//
+//                },
+//                // масив індексів вершин для відмальовування сторін
+//                new int[] {
+//                        // передня сторона
+//                        0, 1, 2,
+//                        2, 3, 0,
+//
+//                        // задня сторона
+//                        6, 5, 4,
+//                        4, 7, 6,
+//
+//                        // ліва сторона
+//                        4, 5, 1,
+//                        1, 0, 4,
+//
+//                        // права сторона
+//                        3, 2, 6,
+//                        6, 7, 3,
+//
+//                        // верхня сторона
+//                        1, 5, 6,
+//                        6, 2, 1,
+//
+//                        // нижня сторона
+//                        4, 0, 3,
+//                        3, 7, 4,
+//                },
+//                new texture()
+//        ));
 
 //        //піраміда
 //        com.my_program.rendering.GlobalState.Objects.add( new com.my_program.rendering.drawableObject(
