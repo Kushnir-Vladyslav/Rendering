@@ -1,5 +1,7 @@
 package com.my_program.rendering;
 
+import java.nio.ByteBuffer;
+
 public class texture {
     private int Width;
     private int Height;
@@ -52,6 +54,36 @@ public class texture {
         this.Texels = Texels;
     }
 
+    //створення буферу який можна передати в OpenGL
+    public ByteBuffer ConvertToByteBuffer () {
+        // Перетворюємо ARGB у RGBA
+        ByteBuffer rgbaBuffer = ByteBuffer.allocateDirect(Texels.length * 4); // 4 байти на піксель (RGBA)
+        for (int i = 0; i < Texels.length; i++) {
+            int argb = Texels[i];
+            // Витягуємо байти ARGB
+            byte a = (byte) ((argb >> 24) & 0xFF); // Alpha
+            byte r = (byte) ((argb >> 16) & 0xFF); // Red
+            byte g = (byte) ((argb >> 8) & 0xFF);  // Green
+            byte b = (byte) (argb & 0xFF);         // Blue
+
+            // Додаємо їх у RGBA порядку
+            rgbaBuffer.put(r);  // Red
+            rgbaBuffer.put(g);  // Green
+            rgbaBuffer.put(b);  // Blue
+            rgbaBuffer.put(a);  // Alpha
+        }
+        rgbaBuffer.flip();
+
+        return rgbaBuffer;
+    }
+
+    public int getWidth () {
+        return Width;
+    }
+
+    public int getHeight () {
+        return Height;
+    }
 
     //повертає колір відповідно до заданий кординат. Кординати повинні бути в межах 0...1
     public int getColor(float X, float Y) {

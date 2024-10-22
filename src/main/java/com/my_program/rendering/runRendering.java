@@ -20,9 +20,17 @@ public class runRendering extends Application {
     private WritableImage writableImage;
     private ImageView imageView;
 
+    public FFFFFFFFF ff = new FFFFFFFFF();
 
     @Override
     public void start(Stage primaryStage) {
+
+
+
+        if (GlobalState.RenderingMethod == GlobalState.renderingMethod.GPU) {
+            GlobalState.openGL = new OpenGl_prob();
+
+        }
 
         writableImage = new WritableImage(GlobalState.getScreenWidth(), GlobalState.getScreenHeight());
 
@@ -41,206 +49,24 @@ public class runRendering extends Application {
 
         //завантаження моделі
         try ( modelReader md = new modelReader();) {
-            md.loaderGLTF("Models/Sponza/Sponza.gltf");
+            md.loaderGLTF("Models/Duck/Duck.gltf");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
-//        //куб
-//        GlobalState.Objects.add(new drawableObject(
-//                // Масив вершин трикутників
-//                new vec4D[] {
-//                        // передня стінка куба
-//                        new vec4D( -0.5f, -0.5f, -0.5f),
-//                        new vec4D( -0.5f, 0.5f, -0.5f),
-//                        new vec4D( 0.5f, 0.5f, -0.5f),
-//                        new vec4D( 0.5f, -0.5f, -0.5f),
-//                        // задня стінка куба
-//                        new vec4D( -0.5f, -0.5f, 0.5f),
-//                        new vec4D( -0.5f, 0.5f, 0.5f),
-//                        new vec4D( 0.5f, 0.5f, 0.5f),
-//                        new vec4D( 0.5f, -0.5f, 0.5f),
-//                },
-//                //масив вершин на текстурі
-//                new vec2D[] {
-//                        new vec2D( 0, 0),
-//                        new vec2D( 1, 0),
-//                        new vec2D( 1, 1),
-//                        new vec2D( 0, 1),
-//
-//                        new vec2D( 0, 0),
-//                        new vec2D( 1, 0),
-//                        new vec2D( 1, 1),
-//                        new vec2D( 0, 1),
-//
-//                },
-//                // масив індексів вершин для відмальовування сторін
-//                new int[] {
-//                        // передня сторона
-//                        0, 1, 2,
-//                        2, 3, 0,
-//
-//                        // задня сторона
-//                        6, 5, 4,
-//                        4, 7, 6,
-//
-//                        // ліва сторона
-//                        4, 5, 1,
-//                        1, 0, 4,
-//
-//                        // права сторона
-//                        3, 2, 6,
-//                        6, 7, 3,
-//
-//                        // верхня сторона
-//                        1, 5, 6,
-//                        6, 2, 1,
-//
-//                        // нижня сторона
-//                        4, 0, 3,
-//                        3, 7, 4,
-//                },
-//                new texture()
-//        ));
-
-//        //піраміда
-//        com.my_program.rendering.GlobalState.Objects.add( new com.my_program.rendering.drawableObject(
-//                // Масив вершин трикутників
-//                new com.my_program.rendering.vec4D[] {
-//                        // вершини основи піраміди
-//                        new com.my_program.rendering.vec4D(-0.5f, 0.0f, -0.5f),  // 0
-//                        new com.my_program.rendering.vec4D(0.5f, 0.0f, -0.5f),   // 1
-//                        new com.my_program.rendering.vec4D(0.5f, 0.0f, 0.5f),    // 2
-//                        new com.my_program.rendering.vec4D(-0.5f, 0.0f, 0.5f),   // 3
-//                        // вершина піраміди
-//                        new com.my_program.rendering.vec4D(0.0f, 1.0f, 0.0f),    // 4
-//                },
-//                // Масив кольорів вершин трикутників
-//                new com.my_program.rendering.vec2D[] {
-//                        new com.my_program.rendering.vec2D( 0, 0),
-//                        new com.my_program.rendering.vec2D( 1, 0),
-//                        new com.my_program.rendering.vec2D( 1, 1),
-//                        new com.my_program.rendering.vec2D( 0, 1),
-//                        new com.my_program.rendering.vec2D(1, 1),
-//                },
-//                // Масив індексів вершин для відмальовування сторін
-//                new int[] {
-//                        // основа
-//                        0, 2, 3,
-//                        0, 1, 2,
-//
-//                        // передня сторона
-//                        0, 4, 1,
-//
-//                        // права сторона
-//                        1, 4, 2,
-//
-//                        // задня сторона
-//                        2, 4, 3,
-//
-//                        // ліва сторона
-//                        3, 4, 0,
-//                },
-//                new com.my_program.rendering.texture()
-//        ));
-
-//        // кубик Д20
-//        com.my_program.rendering.GlobalState.Objects.add( new com.my_program.rendering.drawableObject(
-//        // Масив вершин ікосаедра
-//        new com.my_program.rendering.vec4D[] {
-//                new com.my_program.rendering.vec4D(0, 0, 1),  // вершина 0
-//                new com.my_program.rendering.vec4D(0.8944f, 0, 0.4472f),  // вершина 1
-//                new com.my_program.rendering.vec4D(0.2764f, 0.8506f, 0.4472f),  // вершина 2
-//                new com.my_program.rendering.vec4D(-0.7236f, 0.5257f, 0.4472f),  // вершина 3
-//                new com.my_program.rendering.vec4D(-0.7236f, -0.5257f, 0.4472f),  // вершина 4
-//                new com.my_program.rendering.vec4D(0.2764f, -0.8506f, 0.4472f),  // вершина 5
-//                new com.my_program.rendering.vec4D(0.7236f, 0.5257f, -0.4472f),  // вершина 6
-//                new com.my_program.rendering.vec4D(-0.2764f, 0.8506f, -0.4472f),  // вершина 7
-//                new com.my_program.rendering.vec4D(-0.8944f, 0, -0.4472f),  // вершина 8
-//                new com.my_program.rendering.vec4D(-0.2764f, -0.8506f, -0.4472f),  // вершина 9
-//                new com.my_program.rendering.vec4D(0.7236f, -0.5257f, -0.4472f),  // вершина 10
-//                new com.my_program.rendering.vec4D(0, 0, -1),  // вершина 11
-//        },
-//// Масив кольорів вершин трикутників
-//                new com.my_program.rendering.vec2D[] {
-//                        new com.my_program.rendering.vec2D( 0, 0),
-//                        new com.my_program.rendering.vec2D( 1, 0),
-//                        new com.my_program.rendering.vec2D( 1, 1),
-//                        new com.my_program.rendering.vec2D( 0, 1),
-//                        new com.my_program.rendering.vec2D(1, 1),
-//                        new com.my_program.rendering.vec2D( 1, 0),
-//                        new com.my_program.rendering.vec2D( 0, 0),
-//                        new com.my_program.rendering.vec2D( 1, 0),
-//                        new com.my_program.rendering.vec2D( 1, 1),
-//                        new com.my_program.rendering.vec2D( 0, 1),
-//                        new com.my_program.rendering.vec2D(1, 1),
-//                        new com.my_program.rendering.vec2D( 1, 0),
-//                },
-//// Масив індексів вершин для відмальовування сторін
-//                new int[] {
-//                        0, 1, 2,
-//                        0, 2, 3,
-//                        0, 3, 4,
-//                        0, 4, 5,
-//                        0, 5, 1,
-//
-//                        1, 6, 2,
-//                        2, 7, 3,
-//                        3, 8, 4,
-//                        4, 9, 5,
-//                        5, 10, 1,
-//
-//                        1, 10, 6,
-//                        2, 6, 7,
-//                        3, 7, 8,
-//                        4, 8, 9,
-//                        5, 9, 10,
-//
-//                        6, 11, 7,
-//                        7, 11, 8,
-//                        8, 11, 9,
-//                        9, 11, 10,
-//                        10, 11, 6,
-//                },
-//                new com.my_program.rendering.texture()
-//));
-
-//         //Трикутник
-//        com.my_program.rendering.GlobalState.Objects.add(new com.my_program.rendering.drawableObject(
-//                // Масив вершин трикутників
-//                new com.my_program.rendering.vec4D[] {
-//                        // передня стінка куба
-//                        new com.my_program.rendering.vec4D( -0.5f, -0.5f, -0.5f),
-//                        new com.my_program.rendering.vec4D( -0.5f, 0.5f, -0.5f),
-//                        new com.my_program.rendering.vec4D( 0.5f, 0.5f, -0.5f),
-//                },
-//                //масив вершин на текстурі
-//                new com.my_program.rendering.vec2D[] {
-//                        new com.my_program.rendering.vec2D( 0, 0),
-//                        new com.my_program.rendering.vec2D( 1, 0),
-//                        new com.my_program.rendering.vec2D( 1, 1),
-//
-//                },
-//                // масив індексів вершин для відмальовування сторін
-//                new int[] {
-//                        // передня сторона
-//                        0, 1, 2
-//                },
-//                new com.my_program.rendering.texture()
-//        ));
-
+        //-------------------------------
+        ff.init();
+        //-------------------------------
 
         //обробники подій зміни розміру вікна
         scene.widthProperty().addListener((observable, oldValue, newValue) -> {
             GlobalState.setScreenWidth(newValue.intValue());
             updateImageSize();
-            GlobalState.camera.updatePerspective();
         });
 
         scene.heightProperty().addListener((observable, oldValue, newValue) -> {
             GlobalState.setScreenHeight(newValue.intValue());
             updateImageSize();
-            GlobalState.camera.updatePerspective();
         });
 
         //Обробка натискання клавіш
@@ -293,6 +119,7 @@ public class runRendering extends Application {
                 GlobalState.Time += (float) (now - last) / 1000000000;
 
                 updatePixels((float) (now - last) / 1000000000);
+
                 writableImage.getPixelWriter().setPixels(0, 0,
                         GlobalState.getScreenWidth(), GlobalState.getScreenHeight(),
                         PixelFormat.getIntArgbInstance(), GlobalState.Pixels, 0, GlobalState.getScreenWidth());
@@ -309,14 +136,21 @@ public class runRendering extends Application {
         GlobalState.Pixels = new int[ GlobalState.getScreenWidth() * GlobalState.getScreenHeight()];
         GlobalState.DepthBuffer = new float [GlobalState.getScreenWidth() * GlobalState.getScreenHeight()];
         imageView.setImage(writableImage);
+        GlobalState.camera.updatePerspective();
+        if (GlobalState.RenderingMethod == GlobalState.renderingMethod.GPU) {
+            GlobalState.openGL.windowUpDate();
+        }
     }
 
     //основна функція відрисовки
-    private void updatePixels(float time) {
+    private void updatePixels(float time)  {
 
+        if (GlobalState.RenderingMethod == GlobalState.renderingMethod.GPU) {
+            GlobalState.openGL.clear(0, 1,0);
+        } else {
+            fillBackground(0xFF000000);
+        }
 
-//        System.out.println(1f / com.my_program.rendering.GlobalState.Time);
-        fillBackground(0xFF000000);
 
         float cos = (float) cos(toRadians(GlobalState.Time));
         float sin = (float) sin(toRadians(GlobalState.Time));
@@ -363,24 +197,15 @@ public class runRendering extends Application {
 
 
 
-//        //формування матриці перетворення для обєкту, порядок: розмір, поворот, переміщення
-//        tr =  com.my_program.rendering.matrix4D.scaleMatrix4(1, 1, 1).mult(
-//                com.my_program.rendering.matrix4D.rotationMatrix4(com.my_program.rendering.GlobalState.Time * 100, com.my_program.rendering.GlobalState.Time * 100, com.my_program.rendering.GlobalState.Time * 100)
-//        ).mult(
-//                com.my_program.rendering.matrix4D.translationMatrix4(0, 0, 10)
-//        );
-//
-//        //монження матриці трансформації обєкту з матрицею трансформації камери, послідовність: камера, обєкт
-//        tr = com.my_program.rendering.matrix4D.mult(com.my_program.rendering.GlobalState.com.my_program.rendering.camera.getCameraTransform(), tr);
-//
-//        //множення матриці трансофрмації обєку і камери з матрицею трасформації перспективи, послідовність: перспектив, інш.
-//        tr = com.my_program.rendering.matrix4D.mult(com.my_program.rendering.GlobalState.com.my_program.rendering.camera.getPerspectiveMatrix(), tr);
-//
-//        for (int i = 1; i < 2; i++) {
-//            com.my_program.rendering.GlobalState.Objects.get(i).draw(tr);
-//        }
+        if (GlobalState.RenderingMethod == GlobalState.renderingMethod.GPU) {
+            GlobalState.openGL.getResultOfRenderingOpenGL();
+        }
+
+        ff.loop();
 
     }
+
+
 
     private float cosm(float angle) {
         return (float) Math.cos(toRadians(angle));

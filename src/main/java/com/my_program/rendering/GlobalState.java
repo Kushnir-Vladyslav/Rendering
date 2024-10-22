@@ -51,4 +51,14 @@ public class GlobalState {
         ScreenWidth = Width;
         ScreenHeight = Height;
     }
+
+    public static OpenGl_prob openGL;
+
+    public static renderingMethod RenderingMethod = renderingMethod.CPU;
+
+    public enum renderingMethod {
+        GPU,
+        CPU,
+    }
+
 }

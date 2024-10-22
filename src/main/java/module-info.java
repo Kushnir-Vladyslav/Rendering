@@ -6,6 +6,9 @@ module Rendering {
     requires java.desktop;
     requires jgltf.model;
 
-//    opens com.my_program.rendering to javafx.fxml;
+    requires org.lwjgl;
+    requires org.lwjgl.opengl;
+    requires org.lwjgl.glfw;
+
     exports com.my_program.rendering;
 }
