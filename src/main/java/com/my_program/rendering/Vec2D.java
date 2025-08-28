@@ -1,22 +1,22 @@
 package com.my_program.rendering;
 
-public class vec2D {
+public class Vec2D {
     private float x;
     private float y;
 
-    public vec2D(float num) {
+    public Vec2D(float num) {
         this.x = num;
         this.y = num;
     }
 
-    public vec2D(float x, float y) {
+    public Vec2D(float x, float y) {
         this.x = x;
         this.y = y;
     }
 
     @Override
-    public vec2D clone () {
-        return new vec2D(x, y);
+    public Vec2D clone () {
+        return new Vec2D(x, y);
     }
 
     //блок сетерів і гетерів
@@ -36,59 +36,59 @@ public class vec2D {
         this.y = Y;
     }
 
-    public vec2D add (vec2D other) {
+    public Vec2D add (Vec2D other) {
         this.x += other.x;
         this.y += other.y;
         return this;
     }
 
-    public vec2D add (float x, float y) {
+    public Vec2D add (float x, float y) {
         this.x += x;
         this.y += y;
         return this;
     }
 
-    public static vec2D add (vec2D first, vec2D second) {
-       return new vec2D(first.x + second.x, first.y + second.y);
+    public static Vec2D add (Vec2D first, Vec2D second) {
+       return new Vec2D(first.x + second.x, first.y + second.y);
     }
 
-    public vec2D sub (vec2D other) {
+    public Vec2D sub (Vec2D other) {
         this.x -= other.x;
         this.y -= other.y;
         return this;
     }
 
-    public vec2D sub (float x, float y) {
+    public Vec2D sub (float x, float y) {
         this.x -= x;
         this.y -= y;
         return this;
     }
 
-    public static vec2D sub (vec2D first, vec2D second) {
-        return new vec2D(first.x - second.x, first.y - second.y);
+    public static Vec2D sub (Vec2D first, Vec2D second) {
+        return new Vec2D(first.x - second.x, first.y - second.y);
     }
 
-    public vec2D mult (vec2D other) {
+    public Vec2D mult (Vec2D other) {
         this.x *= other.x;
         this.y *= other.y;
         return this;
     }
 
-    public vec2D mult (float num) {
+    public Vec2D mult (float num) {
         this.x *= num;
         this.y *= num;
         return this;
     }
 
-    public static vec2D mult (vec2D first, vec2D second) {
-        return new vec2D(first.x * second.x, first.y * second.y);
+    public static Vec2D mult (Vec2D first, Vec2D second) {
+        return new Vec2D(first.x * second.x, first.y * second.y);
     }
 
-    public static vec2D mult (vec2D first, float num) {
-        return new vec2D(first.x * num, first.y * num);
+    public static Vec2D mult (Vec2D first, float num) {
+        return new Vec2D(first.x * num, first.y * num);
     }
 
-    public vec2D div (float num) {
+    public Vec2D div (float num) {
         this.x /= num;
         this.y /= num;
         return this;
@@ -98,10 +98,10 @@ public class vec2D {
     //використовувалась при написанні коду
     @Deprecated
     public void draw (int color) {
-        if (this.x >= 0 && this.x < GlobalState.getScreenWidth() &&
-        this.y >= 0 && this.y < GlobalState.getScreenHeight()) {
-            int pixelID = (int) this.y * GlobalState.getScreenWidth() + (int) this.x;
-            GlobalState.Pixels[pixelID] = color;
+        if (this.x >= 0 && this.x < GS.getScreenWidth() &&
+        this.y >= 0 && this.y < GS.getScreenHeight()) {
+            int pixelID = (int) this.y * GS.getScreenWidth() + (int) this.x;
+            GS.Pixels[pixelID] = color;
         }
     }
 }

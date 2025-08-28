@@ -89,14 +89,14 @@ public class modelReader implements AutoCloseable  {
                 int numElements = positionData.getNumElements();
                 int numComponents = positionData.getNumComponentsPerElement();
 
-                vec4D[] VerticesBuffer;
+                Vec4D[] VerticesBuffer;
 
                 if (numElements > 0 && numComponents == 3) {
 
-                    VerticesBuffer = new vec4D[positionData.getNumElements()];
+                    VerticesBuffer = new Vec4D[positionData.getNumElements()];
 
                     for (int e = 0; e < numElements; e++) {
-                        VerticesBuffer[e] = new vec4D(
+                        VerticesBuffer[e] = new Vec4D(
                                 positionData.get(e, 0),
                                 positionData.get(e, 1),
                                 positionData.get(e, 2));
@@ -115,10 +115,10 @@ public class modelReader implements AutoCloseable  {
                 numElements = UIData.getNumElements();
                 numComponents = UIData.getNumComponentsPerElement();
 
-                vec2D[] ObjectUv;
+                Vec2D[] ObjectUv;
 
                 if (numElements > 0 && numComponents == 2) {
-                    ObjectUv = new vec2D[numElements];
+                    ObjectUv = new Vec2D[numElements];
 
                     for (int e = 0; e < numElements; e++) {
                         float x = UIData.get(e, 0) % 1;
@@ -132,7 +132,7 @@ public class modelReader implements AutoCloseable  {
                             y += 1.f;
                         }
 
-                        ObjectUv[e] = new vec2D(x, y);
+                        ObjectUv[e] = new Vec2D(x, y);
                     }
 
                 } else {
@@ -157,7 +157,7 @@ public class modelReader implements AutoCloseable  {
                 }
 
                 //оттримуємо текстуру
-                texture Texture = null;
+                Texture texture = null;
 
                 MaterialModelV2 material = (MaterialModelV2) primitive.getMaterialModel();
                 if (material != null) {
@@ -183,17 +183,17 @@ public class modelReader implements AutoCloseable  {
                                 }
                             }
 
-                            Texture = new texture(Height, Width, Texels);
+                            texture = new Texture(Height, Width, Texels);
                         }
                     }
                 }
 
                 //якщо теустуру не заванатажено створюємо стандартну (шахматну)
-                if (Texture == null) {
-                    Texture = new texture();
+                if (texture == null) {
+                    texture = new Texture();
                 }
 
-                GlobalState.Objects.add(new drawableObject(VerticesBuffer, ObjectUv, IndexBuffer, Texture));
+                GS.Objects.add(new DrawableObject(VerticesBuffer, ObjectUv, IndexBuffer, texture));
 
             }
         }

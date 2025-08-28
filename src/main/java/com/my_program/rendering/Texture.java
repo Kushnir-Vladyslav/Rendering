@@ -1,6 +1,6 @@
 package com.my_program.rendering;
 
-public class texture {
+public class Texture {
     private int Width;
     private int Height;
 
@@ -17,7 +17,7 @@ public class texture {
     private sampler Sampler = sampler.SAMPLER_TYPE_BILINEAR;
 
     //дефолтний коструктор, створює текстуру шахової дошки
-    texture () {
+    Texture() {
         int BlocSize = 8;
         int NumBloc = 64;
 
@@ -46,7 +46,7 @@ public class texture {
     }
 
     // створення текстури завантаженої, або створеної зовні
-    texture (int Height, int Width, int[] Texels) {
+    Texture(int Height, int Width, int[] Texels) {
         this.Height = Height;
         this.Width = Width;
         this.Texels = Texels;
@@ -58,16 +58,16 @@ public class texture {
        return Sampler.getColor(this, X, Y);
     }
 
-    public int getColor(vec2D Point) {
+    public int getColor(Vec2D Point) {
         return Sampler.getColor(this, Point.x(), Point.y());
     }
 
-    private int ColorRgbToInt(vec4D Color) {
+    private int ColorRgbToInt(Vec4D Color) {
         return ((int)(Color.a() * 255) << 24) | ((int)(Color.r() * 255) << 16) | ((int)(Color.g() * 255) << 8) | (int)(Color.b() * 255);
     }
 
-    private vec4D ColorIntToRgb(int color) {
-        return new vec4D(
+    private Vec4D ColorIntToRgb(int color) {
+        return new Vec4D(
                 ((color & 0X00FF0000) >> 16) / 255.f,
                 ((color & 0x0000FF00) >> 8) / 255.f,
                 (color & 0x000000FF) / 255.f,
@@ -78,7 +78,7 @@ public class texture {
     public enum sampler {
         SAMPLER_TYPE_NEAR{
             @Override
-            public int getColor(texture Texture, float X, float Y) {
+            public int getColor(Texture Texture, float X, float Y) {
                 if (X >= 0 && X <= 1 && Y >= 0 && Y <= 1) {
                     int TexelX = (int) Math.floor(X * (Texture.Width - 1));
                     int TexelY = (int) Math.floor(Y * (Texture.Height - 1));
@@ -91,7 +91,7 @@ public class texture {
 
         SAMPLER_TYPE_BILINEAR {
             @Override
-            public int getColor(texture Texture, float X, float Y) {
+            public int getColor(Texture Texture, float X, float Y) {
                 //Положення пікселяна в корддинатах техтури
                 float PointX = X * Texture.Width - 0.5f;
                 float PointY = (1 - Y) * Texture.Height - 0.5f;
@@ -101,15 +101,15 @@ public class texture {
                 int TexelY = (int) Math.floor(PointY);
 
                 // масив кординат найблищих текселів, порядок нижній лівий, нижній правий, верхній лівий, верхній правий
-                vec2D[] TexelPosition = new vec2D[] {
-                        new vec2D(TexelX, TexelY),
-                        new vec2D(TexelX + 1, TexelY),
-                        new vec2D(TexelX, TexelY + 1),
-                        new vec2D(TexelX + 1, TexelY + 1),
+                Vec2D[] TexelPosition = new Vec2D[] {
+                        new Vec2D(TexelX, TexelY),
+                        new Vec2D(TexelX + 1, TexelY),
+                        new Vec2D(TexelX, TexelY + 1),
+                        new Vec2D(TexelX + 1, TexelY + 1),
                 };
 
                 //масив кольорів найблищих текселів, порядок той самий що і для кординат
-                vec4D[] TexelColor = new vec4D[4];
+                Vec4D[] TexelColor = new Vec4D[4];
 
 
                 for (int i = 0; i < TexelPosition.length; i++) {
@@ -126,14 +126,14 @@ public class texture {
                 float S = PointX - TexelX;
                 float K = PointY - TexelY;
 
-                vec4D LowInterpolateColor = TexelColor[0].mult(1.f - S).add(
+                Vec4D LowInterpolateColor = TexelColor[0].mult(1.f - S).add(
                         TexelColor[1].mult(S)
                 );
-                vec4D UpInterpolateColor = TexelColor[2].mult(1.f - S).add(
+                Vec4D UpInterpolateColor = TexelColor[2].mult(1.f - S).add(
                         TexelColor[3].mult(S)
                 );
 
-                vec4D InterpolateColor =LowInterpolateColor.mult(1.f - K).add(
+                Vec4D InterpolateColor =LowInterpolateColor.mult(1.f - K).add(
                         UpInterpolateColor.mult(K)
                 );
 
@@ -141,7 +141,7 @@ public class texture {
             }
         };
 
-        public abstract int getColor(texture Texture, float X, float Y);
+        public abstract int getColor(Texture Texture, float X, float Y);
     }
 }
 

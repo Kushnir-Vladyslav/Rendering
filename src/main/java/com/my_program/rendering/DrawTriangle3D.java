@@ -3,18 +3,18 @@ package com.my_program.rendering;
 public class DrawTriangle3D {
 
     //Вершини первинного трикутника
-    private vec4D Point1;
-    private vec4D Point2;
-    private vec4D Point3;
+    private Vec4D Point1;
+    private Vec4D Point2;
+    private Vec4D Point3;
 
     //матриця трансформації трикутник
-    private matrix4D Transforms;
+    private Matrix4D Transforms;
 
     //Вершини трикутника на карті текстури
-    private vec2D[] UvPoints;
+    private Vec2D[] UvPoints;
 
     //Текстура що відображається на трикутнику
-    private texture Texture;
+    private com.my_program.rendering.Texture texture;
 
     //основний масив урізаних трикутників
     static private int NumOfMainTriangles;
@@ -39,7 +39,7 @@ public class DrawTriangle3D {
         NumOfSecondaryTriangles = 0;
     }
 
-    public DrawTriangle3D(vec4D[] Points, matrix4D InitialPosition, vec2D[] UvPoints, texture Texture) {
+    public DrawTriangle3D(Vec4D[] Points, Matrix4D InitialPosition, Vec2D[] UvPoints, com.my_program.rendering.Texture texture) {
         this.Point1 = Points[0];
         this.Point2 = Points[1];
         this.Point3 = Points[2];
@@ -48,18 +48,18 @@ public class DrawTriangle3D {
 
         this.UvPoints = UvPoints;
 
-        this.Texture = Texture;
+        this.texture = texture;
 
         NumOfMainTriangles = 0;
         NumOfSecondaryTriangles = 0;
     }
 
     @Deprecated
-    public vec2D getPoint2 (int num) {
+    public Vec2D getPoint2 (int num) {
         if (num == 0) return Point1.Perspective();
         if (num == 1) return Point2.Perspective();
         if (num == 2) return Point3.Perspective();
-        return new vec2D(0);
+        return new Vec2D(0);
     }
 
     private void clippingTriangle (clipAxis ClipAxis) {
@@ -109,12 +109,12 @@ public class DrawTriangle3D {
                             MainTriangles[TriangleID].Points[(IsNotInOfSight + 1) % 3]
                     );
                     SecondaryTriangles[NumOfSecondaryTriangles].Points[0] =
-                            vec4D.mult(MainTriangles[TriangleID].Points[IsNotInOfSight], 1f - S).add(
-                                    vec4D.mult(MainTriangles[TriangleID].Points[(IsNotInOfSight + 1) % 3], S)
+                            Vec4D.mult(MainTriangles[TriangleID].Points[IsNotInOfSight], 1f - S).add(
+                                    Vec4D.mult(MainTriangles[TriangleID].Points[(IsNotInOfSight + 1) % 3], S)
                             );
                     SecondaryTriangles[NumOfSecondaryTriangles].UvPoints[0] =
-                            vec2D.mult(MainTriangles[TriangleID].UvPoints[IsNotInOfSight], 1f - S).add(
-                                    vec2D.mult(MainTriangles[TriangleID].UvPoints[(IsNotInOfSight + 1) % 3], S)
+                            Vec2D.mult(MainTriangles[TriangleID].UvPoints[IsNotInOfSight], 1f - S).add(
+                                    Vec2D.mult(MainTriangles[TriangleID].UvPoints[(IsNotInOfSight + 1) % 3], S)
                             );
 
                     //наступні дві точки це ті що входять, в тійже послідовності
@@ -148,12 +148,12 @@ public class DrawTriangle3D {
                             MainTriangles[TriangleID].Points[IsNotInOfSight]
                     );
                     SecondaryTriangles[NumOfSecondaryTriangles].Points[2] =
-                            vec4D.mult(MainTriangles[TriangleID].Points[(IsNotInOfSight + 2) % 3], 1f - S).add(
-                                    vec4D.mult(MainTriangles[TriangleID].Points[IsNotInOfSight], S)
+                            Vec4D.mult(MainTriangles[TriangleID].Points[(IsNotInOfSight + 2) % 3], 1f - S).add(
+                                    Vec4D.mult(MainTriangles[TriangleID].Points[IsNotInOfSight], S)
                             );
                     SecondaryTriangles[NumOfSecondaryTriangles].UvPoints[2] =
-                            vec2D.mult(MainTriangles[TriangleID].UvPoints[(IsNotInOfSight + 2) % 3], 1f - S).add(
-                                    vec2D.mult(MainTriangles[TriangleID].UvPoints[IsNotInOfSight], S)
+                            Vec2D.mult(MainTriangles[TriangleID].UvPoints[(IsNotInOfSight + 2) % 3], 1f - S).add(
+                                    Vec2D.mult(MainTriangles[TriangleID].UvPoints[IsNotInOfSight], S)
                             );
 
                     NumOfSecondaryTriangles++;
@@ -183,12 +183,12 @@ public class DrawTriangle3D {
                             MainTriangles[TriangleID].Points[(IsInOfSight + 1) % 3]
                     );
                     SecondaryTriangles[NumOfSecondaryTriangles].Points[1] =
-                            vec4D.mult(MainTriangles[TriangleID].Points[IsInOfSight], 1f - S).add(
-                                    vec4D.mult(MainTriangles[TriangleID].Points[(IsInOfSight + 1) % 3], S)
+                            Vec4D.mult(MainTriangles[TriangleID].Points[IsInOfSight], 1f - S).add(
+                                    Vec4D.mult(MainTriangles[TriangleID].Points[(IsInOfSight + 1) % 3], S)
                             );
                     SecondaryTriangles[NumOfSecondaryTriangles].UvPoints[1] =
-                            vec2D.mult(MainTriangles[TriangleID].UvPoints[IsInOfSight], 1f - S).add(
-                                    vec2D.mult(MainTriangles[TriangleID].UvPoints[(IsInOfSight + 1) % 3], S)
+                            Vec2D.mult(MainTriangles[TriangleID].UvPoints[IsInOfSight], 1f - S).add(
+                                    Vec2D.mult(MainTriangles[TriangleID].UvPoints[(IsInOfSight + 1) % 3], S)
                             );
 
 
@@ -198,12 +198,12 @@ public class DrawTriangle3D {
                             MainTriangles[TriangleID].Points[IsInOfSight]
                     );
                     SecondaryTriangles[NumOfSecondaryTriangles].Points[2] =
-                            vec4D.mult(MainTriangles[TriangleID].Points[(IsInOfSight + 2) % 3], 1f - S).add(
-                                    vec4D.mult(MainTriangles[TriangleID].Points[IsInOfSight], S)
+                            Vec4D.mult(MainTriangles[TriangleID].Points[(IsInOfSight + 2) % 3], 1f - S).add(
+                                    Vec4D.mult(MainTriangles[TriangleID].Points[IsInOfSight], S)
                             );
                     SecondaryTriangles[NumOfSecondaryTriangles].UvPoints[2] =
-                            vec2D.mult(MainTriangles[TriangleID].UvPoints[(IsInOfSight + 2) % 3], 1f - S).add(
-                                    vec2D.mult(MainTriangles[TriangleID].UvPoints[IsInOfSight], S)
+                            Vec2D.mult(MainTriangles[TriangleID].UvPoints[(IsInOfSight + 2) % 3], 1f - S).add(
+                                    Vec2D.mult(MainTriangles[TriangleID].UvPoints[IsInOfSight], S)
                             );
 
                     NumOfSecondaryTriangles++;
@@ -242,17 +242,17 @@ public class DrawTriangle3D {
         //основний цикл відмальовування трикутників
         for (int TriangleID = 0; TriangleID < NumOfMainTriangles; TriangleID++) {
 
-            vec4D TransformPoint1 = MainTriangles[TriangleID].Points[0].div3D(
+            Vec4D TransformPoint1 = MainTriangles[TriangleID].Points[0].div3D(
                     MainTriangles[TriangleID].Points[0].w());
-            vec4D TransformPoint2 = MainTriangles[TriangleID].Points[1].div3D(
+            Vec4D TransformPoint2 = MainTriangles[TriangleID].Points[1].div3D(
                     MainTriangles[TriangleID].Points[1].w());
-            vec4D TransformPoint3 = MainTriangles[TriangleID].Points[2].div3D(
+            Vec4D TransformPoint3 = MainTriangles[TriangleID].Points[2].div3D(
                     MainTriangles[TriangleID].Points[2].w());
 
             // Проектування точок на екран
-            vec2D ProjectionPoint1 = TransformPoint1.NdcToPixels();
-            vec2D ProjectionPoint2 = TransformPoint2.NdcToPixels();
-            vec2D ProjectionPoint3 = TransformPoint3.NdcToPixels();
+            Vec2D ProjectionPoint1 = TransformPoint1.NdcToPixels();
+            Vec2D ProjectionPoint2 = TransformPoint2.NdcToPixels();
+            Vec2D ProjectionPoint3 = TransformPoint3.NdcToPixels();
 
             //визначення меж в якому розташований трикутник
             //Пошук області в якій розташовано трикутник
@@ -267,9 +267,9 @@ public class DrawTriangle3D {
             //оскільки всі обєкти точно входять в площину екрану
 
             //знаходження векторів ребер
-            vec2D Edge1 = vec2D.sub(ProjectionPoint2, ProjectionPoint1);
-            vec2D Edge2 = vec2D.sub(ProjectionPoint3, ProjectionPoint2);
-            vec2D Edge3 = vec2D.sub(ProjectionPoint1, ProjectionPoint3);
+            Vec2D Edge1 = Vec2D.sub(ProjectionPoint2, ProjectionPoint1);
+            Vec2D Edge2 = Vec2D.sub(ProjectionPoint3, ProjectionPoint2);
+            Vec2D Edge3 = Vec2D.sub(ProjectionPoint1, ProjectionPoint3);
 
             //перевіряємо чи є ребро верхнім лівим, щоб знати чи малювати його
             boolean isTopLeft1 = (Edge1.y() > 0.f) || (Edge1.x() > 0.f && Edge1.y() == 0.f);
@@ -278,7 +278,7 @@ public class DrawTriangle3D {
 
             //спільний дільник для барецентричних координат
             //барцентричний коефіціент заміненно на обернений для заміни дорого ділення на множення в наступних операціяч
-            float ConverseBaryCentricDiv = 1.f / vectorProduct(vec2D.sub(ProjectionPoint2, ProjectionPoint1), vec2D.sub(ProjectionPoint3, ProjectionPoint1));
+            float ConverseBaryCentricDiv = 1.f / vectorProduct(Vec2D.sub(ProjectionPoint2, ProjectionPoint1), Vec2D.sub(ProjectionPoint3, ProjectionPoint1));
 
             //розраховується обрененний коефіціент для заміни дорого ділення на множення в наступних операціях
             float ConverseW1 = 1.f / TransformPoint1.w();
@@ -289,12 +289,12 @@ public class DrawTriangle3D {
             //а для базової з додванням зміщення для кожної наступної точки.
 
             //координати точки що потрпила що перевіряється
-            vec2D PixelPoint = new vec2D(minX, minY).add(0.5f, 0.5f);
+            Vec2D PixelPoint = new Vec2D(minX, minY).add(0.5f, 0.5f);
 
             //побудова векторів від кутів до точки
-            vec2D PixelVector1 = vec2D.sub(PixelPoint, ProjectionPoint1);
-            vec2D PixelVector2 = vec2D.sub(PixelPoint, ProjectionPoint2);
-            vec2D PixelVector3 = vec2D.sub(PixelPoint, ProjectionPoint3);
+            Vec2D PixelVector1 = Vec2D.sub(PixelPoint, ProjectionPoint1);
+            Vec2D PixelVector2 = Vec2D.sub(PixelPoint, ProjectionPoint2);
+            Vec2D PixelVector3 = Vec2D.sub(PixelPoint, ProjectionPoint3);
 
             //довжина векторнионого добутку для вектору кожного ребра та вектору до точки
             float BaseLengthVectorProduct1 = vectorProduct(PixelVector1, Edge1);
@@ -323,7 +323,7 @@ public class DrawTriangle3D {
                             (LengthVectorProduct2 <= 0 || (isTopLeft2 && LengthVectorProduct2 == 0.f)) &&
                             (LengthVectorProduct3 <= 0 || (isTopLeft3 && LengthVectorProduct3 == 0.f))) {
                         // положення точки в масиві пікселів та масиві глибин
-                        int PixelID = y * GlobalState.getScreenWidth() + x;
+                        int PixelID = y * GS.getScreenWidth() + x;
 
                         //коефіціенти для інтерполяції кольоровів/глибини в трикутнику
                         //заміненна дорога операція ділення на дешевшу множення
@@ -335,7 +335,7 @@ public class DrawTriangle3D {
                         float Depth = T1 * TransformPoint1.z() + T2 * TransformPoint2.z() + T3 * TransformPoint3.z();
 
 
-                        if ( Depth < GlobalState.DepthBuffer[PixelID]) {
+                        if ( Depth < GS.DepthBuffer[PixelID]) {
                             //замінено дорогого ділення на множення
                             //float OneOverW = T1 / TransformPoint1.w() + T2 / TransformPoint2.w() + T3 / TransformPoint3.w();
 
@@ -343,14 +343,14 @@ public class DrawTriangle3D {
 
                             // інтерполяція положення точки в трикутнику, відносно вершин
                             //замінено дороге ділення на множення
-                            //com.my_program.rendering.vec2D Uv1 = com.my_program.rendering.vec2D.mult(MainTriangles[TriangleID].UvPoints[0], T1).div(TransformPoint1.w());
+                            //com.my_program.rendering.Vec2D Uv1 = com.my_program.rendering.Vec2D.mult(MainTriangles[TriangleID].UvPoints[0], T1).div(TransformPoint1.w());
 
-                            vec2D Uv1 = vec2D.mult(MainTriangles[TriangleID].UvPoints[0], T1).mult(ConverseW1);
-                            vec2D Uv2 = vec2D.mult(MainTriangles[TriangleID].UvPoints[1], T2).mult(ConverseW2);
-                            vec2D Uv3 = vec2D.mult(MainTriangles[TriangleID].UvPoints[2], T3).mult(ConverseW3);
+                            Vec2D Uv1 = Vec2D.mult(MainTriangles[TriangleID].UvPoints[0], T1).mult(ConverseW1);
+                            Vec2D Uv2 = Vec2D.mult(MainTriangles[TriangleID].UvPoints[1], T2).mult(ConverseW2);
+                            Vec2D Uv3 = Vec2D.mult(MainTriangles[TriangleID].UvPoints[2], T3).mult(ConverseW3);
 
-                            GlobalState.Pixels[PixelID] = Texture.getColor(Uv1.add(Uv2).add(Uv3).div(OneOverW));
-                            GlobalState.DepthBuffer[PixelID] = Depth;
+                            GS.Pixels[PixelID] = texture.getColor(Uv1.add(Uv2).add(Uv3).div(OneOverW));
+                            GS.DepthBuffer[PixelID] = Depth;
                         }
                     }
                 }
@@ -361,14 +361,14 @@ public class DrawTriangle3D {
 
     //перетворення вектору з кольорами в діапазоні 0 ... 1, в цілочисельне значення
     //для текстур не потрібно вираховувати колір
-    //перенесено в клас "com.my_program.rendering.texture"
+    //перенесено в клас "com.my_program.rendering.Texture"
     @Deprecated
-    private int toRGBA(vec4D Color) {
+    private int toRGBA(Vec4D Color) {
         return ((int)(Color.a() * 255) << 24) | ((int)(Color.r() * 255) << 16) | ((int)(Color.g() * 255) << 8) | (int)(Color.b() * 255);
     }
 
     // довжина векторного добутоку двох векторів
-    private float vectorProduct (vec2D TriangleEdge, vec2D ToPointVector) {
+    private float vectorProduct (Vec2D TriangleEdge, Vec2D ToPointVector) {
         return (TriangleEdge.x() * ToPointVector.y() - TriangleEdge.y() * ToPointVector.x());
     }
 }

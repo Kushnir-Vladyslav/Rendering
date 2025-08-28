@@ -70,15 +70,15 @@ public class vec3D {
         return this.z;
     }
 
-    public vec2D xy () {
-        return new vec2D(this.x, this.y);
+    public Vec2D xy () {
+        return new Vec2D(this.x, this.y);
     }
 
     //проектування трьовимірної точки на двовимірну площину екрану
-    public vec2D Perspective () {
-        vec2D result = new vec2D(this.x / this.z, -this.y / this.z);
-        result.add(new vec2D(1, 1)).mult(0.5f);
-        return result.mult(new vec2D(GlobalState.getScreenWidth(), GlobalState.getScreenHeight()));
+    public Vec2D Perspective () {
+        Vec2D result = new Vec2D(this.x / this.z, -this.y / this.z);
+        result.add(new Vec2D(1, 1)).mult(0.5f);
+        return result.mult(new Vec2D(GS.getScreenWidth(), GS.getScreenHeight()));
     }
 
     //функція для  проектування та малювання точки в кординатах відповідному цьому вектору

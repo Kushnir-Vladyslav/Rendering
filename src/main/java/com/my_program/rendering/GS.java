@@ -1,8 +1,10 @@
 package com.my_program.rendering;
 
+import com.my_program.rendering.CPU.Buffers.Buffers;
+
 import java.util.Vector;
 
-public class GlobalState {
+public class GS {
     //початковий розмір вікна, може змінюватись користувачем
     private static int ScreenWidth = 400;
     private static int ScreenHeight = 400;
@@ -17,7 +19,7 @@ public class GlobalState {
     public static float Time = 0.f;
 
     // обєскти які потрібно мулювати
-    public static Vector<drawableObject> Objects = new Vector<>();
+    public static Vector<DrawableObject> Objects = new Vector<>();
 
     // швидкість преміщення
     public static float Speed = 100.f;
@@ -51,4 +53,10 @@ public class GlobalState {
         ScreenWidth = Width;
         ScreenHeight = Height;
     }
+
+    ///////
+    public static Buffers buffers = new Buffers();
+
+
+
 }

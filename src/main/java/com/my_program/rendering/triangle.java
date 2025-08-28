@@ -3,15 +3,15 @@ package com.my_program.rendering;
 public class triangle {
 
     //вершини трикутника
-    public vec4D[] Points;
+    public Vec4D[] Points;
 
     //Вершини трикутника на карті текстури
-    public vec2D[] UvPoints;
+    public Vec2D[] UvPoints;
 
     triangle() {
-        Points = new vec4D[3];
+        Points = new Vec4D[3];
 
-        UvPoints = new vec2D[3];
+        UvPoints = new Vec2D[3];
     }
 
 }
