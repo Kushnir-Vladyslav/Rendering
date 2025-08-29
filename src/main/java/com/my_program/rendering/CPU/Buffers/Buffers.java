@@ -7,8 +7,9 @@ import com.my_program.rendering.Vec4D;
 
 public class Buffers {
     public static Vec4D[] bufferVertices;
+    public static Vec4D[] bufferTransformedVertices;
     public static Vec2D[] bufferUV;
-    public static int[] bufferIndices;
+    public static int[] bufferIndexes;
     public static Matrix4D transformMatrix;
 
     public static int[] bufferObjectsRef;

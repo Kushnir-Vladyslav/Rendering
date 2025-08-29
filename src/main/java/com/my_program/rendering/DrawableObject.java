@@ -33,6 +33,10 @@ public class DrawableObject {
         return indexBuffer;
     }
 
+    public Texture getTexture() {
+        return texture;
+    }
+
     DrawableObject(Vec4D[] VerticesBuffer, Vec2D[] ObjectUv, int[] IndexBuffer, Texture texture) {
         this.verticesBuffer = VerticesBuffer;
         this.objectUv = ObjectUv;

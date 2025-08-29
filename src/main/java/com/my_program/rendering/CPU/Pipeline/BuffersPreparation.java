@@ -1,11 +1,8 @@
 package com.my_program.rendering.CPU.Pipeline;
 
+import com.my_program.rendering.*;
 import com.my_program.rendering.CPU.Buffers.Buffers;
 import com.my_program.rendering.CPU.Buffers.ObjectMaterial;
-import com.my_program.rendering.DrawableObject;
-import com.my_program.rendering.GS;
-import com.my_program.rendering.Vec2D;
-import com.my_program.rendering.Vec4D;
 
 import java.util.Vector;
 
@@ -33,11 +30,43 @@ public class BuffersPreparation {
             numOfVertex[i + 1] = numOfVertex[i] + objects.get(i).getNumVertices();
         }
 
-        Buffers buffers = GS.buffers;
+        Buffers.bufferVertices = new Vec4D[numOfVertex[objects.size()]];
+        Buffers.bufferTransformedVertices = new Vec4D[numOfVertex[objects.size()]];
+        Buffers.bufferUV = new Vec2D[numOfVertex[objects.size()]];
+        Buffers.objects = new ObjectMaterial[numOfVertex[objects.size()]];
 
-        buffers.bufferVertices = new Vec4D[objects.size()];
-        buffers.bufferUV = new Vec2D[objects.size()];
-        buffers.objects = new ObjectMaterial[objects.size()];
+        Buffers.textures = new Texture[objects.size()];
+
+        for (int i = 0; i < objects.size(); i++) {
+            DrawableObject object = objects.get(i);
+            Buffers.textures[i] = object.getTexture();
+
+            for(int j = 0; j < object.getNumIndex(); j++) {
+                Buffers.bufferVertices[numOfVertex[i] + j] = object.getVerticesBuffer()[j];
+                Buffers.bufferUV[numOfVertex[i] + j] = object.getUVBuffer()[j];
+                Buffers.objects[numOfVertex[i] + j] = new ObjectMaterial(
+                        Buffers.textures[i].getTextureWidth(),
+                        Buffers.textures[i].getTextureHeight(),
+                        i
+                );
+            }
+        }
+
+        Buffers.bufferObjectsRef = new int[objects.size() + 1];
+
+        for (int i = 0; i < objects.size(); i++) {
+            Buffers.bufferObjectsRef[i + 1] = Buffers.bufferObjectsRef[i] + objects.get(i).getNumIndex();
+        }
+
+        Buffers.bufferIndexes = new int[Buffers.bufferObjectsRef[objects.size()]];
+
+        for (int i = 0; i < objects.size(); i++) {
+            int[] indexes = objects.get(i).getIndexBuffer();
+            for (int j = 0; j < indexes.length; j++) {
+                Buffers.bufferIndexes[Buffers.bufferObjectsRef[i] + j] = indexes[j];
+            }
+        }
+
     }
 
 

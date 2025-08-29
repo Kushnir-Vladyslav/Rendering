@@ -3,6 +3,7 @@ package com.my_program.rendering;
 import com.my_program.rendering.CPU.Buffers.Buffers;
 
 import java.util.Vector;
+import java.util.concurrent.ForkJoinPool;
 
 public class GS {
     //початковий розмір вікна, може змінюватись користувачем
@@ -56,6 +57,8 @@ public class GS {
 
     ///////
     public static Buffers buffers = new Buffers();
+
+    ForkJoinPool pool = new ForkJoinPool(18);
 
 
 
