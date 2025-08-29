@@ -6,15 +6,28 @@ import com.my_program.rendering.Vec2D;
 import com.my_program.rendering.Vec4D;
 
 public class Buffers {
+    //starting buffers
     public static Vec4D[] bufferVertices;
-    public static Vec4D[] bufferTransformedVertices;
     public static Vec2D[] bufferUV;
     public static int[] bufferIndexes;
-    public static Matrix4D transformMatrix;
 
     public static int[] bufferObjectsRef;
-    
-    public static ObjectMaterial[] objects;
-
+    public static ObjectMaterial[] vertexMaterial;
     public static Texture[] textures;
+
+    public static Matrix4D transformMatrix;
+
+    //transformed buffers
+    public static Vec4D[] bufferTransformedVertices;
+
+    //primer polygons
+    public static Vec4D[] bufferPolygonsVertices;
+    public static Vec2D[] bufferPolygonsUV;
+    public static ObjectMaterial[] polygonMaterial;
+
+    //Clipping polygons
+    public static Vec4D[] clippingPolygon;
+    public static Vec2D[] clippingPolygonsUV;
+    public static ObjectMaterial[] clippingPolygonMaterial;
+
 }
