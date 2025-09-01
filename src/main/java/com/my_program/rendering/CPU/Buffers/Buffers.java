@@ -5,6 +5,8 @@ import com.my_program.rendering.Texture;
 import com.my_program.rendering.Vec2D;
 import com.my_program.rendering.Vec4D;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class Buffers {
     //starting buffers
     public static Vec4D[] bufferVertices;
@@ -29,5 +31,8 @@ public class Buffers {
     public static Vec4D[] clippingPolygon;
     public static Vec2D[] clippingPolygonsUV;
     public static ObjectMaterial[] clippingPolygonMaterial;
+
+    public AtomicInteger clippingCounter = new AtomicInteger(0);
+
 
 }
