@@ -101,7 +101,12 @@ public class Vec2D {
         if (this.x >= 0 && this.x < GS.getScreenWidth() &&
         this.y >= 0 && this.y < GS.getScreenHeight()) {
             int pixelID = (int) this.y * GS.getScreenWidth() + (int) this.x;
-            GS.Pixels[pixelID] = color;
+            GS.pixels[pixelID] = color;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "(" + x + ", " + y + ")";
     }
 }

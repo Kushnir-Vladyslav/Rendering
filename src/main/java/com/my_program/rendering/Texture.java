@@ -17,7 +17,7 @@ public class Texture {
     private Sampler sampler = Sampler.SAMPLER_TYPE_BILINEAR;
 
     //дефолтний коструктор, створює текстуру шахової дошки
-    Texture() {
+    public Texture() {
         int BlocSize = 8;
         int NumBloc = 64;
 
@@ -46,7 +46,7 @@ public class Texture {
     }
 
     // створення текстури завантаженої, або створеної зовні
-    Texture(int Height, int Width, int[] Texels) {
+    public Texture(int Height, int Width, int[] Texels) {
         this.height = Height;
         this.width = Width;
         this.texels = Texels;

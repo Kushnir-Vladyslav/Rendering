@@ -1,5 +1,6 @@
 package com.my_program.rendering;
 
+import com.my_program.rendering.CPU.Pipeline.PipelineProcessing;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -20,13 +21,15 @@ public class runRendering extends Application {
     private WritableImage writableImage;
     private ImageView imageView;
 
+    private PipelineProcessing pipelineProcessing;
+
 
     @Override
     public void start(Stage primaryStage) {
 
         writableImage = new WritableImage(GS.getScreenWidth(), GS.getScreenHeight());
 
-        GS.Pixels = new int [GS.getScreenWidth() * GS.getScreenHeight()];
+        GS.pixels = new int [GS.getScreenWidth() * GS.getScreenHeight()];
         GS.DepthBuffer = new float [GS.getScreenWidth() * GS.getScreenHeight()];
 
         imageView = new ImageView(writableImage);
@@ -41,6 +44,7 @@ public class runRendering extends Application {
 
         //завантаження моделі
         try ( modelReader md = new modelReader();) {
+//            md.loaderGLTF("Models/Duck/Duck.gltf");
             md.loaderGLTF("Models/Sponza/Sponza.gltf");
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -103,7 +107,7 @@ public class runRendering extends Application {
 //                new Texture()
 //        ));
 
-//        //піраміда
+////піраміда
 //        com.my_program.rendering.GS.Objects.add( new com.my_program.rendering.DrawableObject(
 //                // Масив вершин трикутників
 //                new com.my_program.rendering.Vec4D[] {
@@ -229,6 +233,8 @@ public class runRendering extends Application {
 //                new com.my_program.rendering.Texture()
 //        ));
 
+        pipelineProcessing = new PipelineProcessing(GS.Objects);
+        pipelineProcessing.createBuffers();
 
         //обробники подій зміни розміру вікна
         scene.widthProperty().addListener((observable, oldValue, newValue) -> {
@@ -295,7 +301,7 @@ public class runRendering extends Application {
                 updatePixels((float) (now - last) / 1000000000);
                 writableImage.getPixelWriter().setPixels(0, 0,
                         GS.getScreenWidth(), GS.getScreenHeight(),
-                        PixelFormat.getIntArgbInstance(), GS.Pixels, 0, GS.getScreenWidth());
+                        PixelFormat.getIntArgbInstance(), GS.pixels, 0, GS.getScreenWidth());
 
                 last = now;
             }
@@ -306,9 +312,10 @@ public class runRendering extends Application {
     //оновлення вікна після зміни розміру
     private void updateImageSize() {
         writableImage = new WritableImage( GS.getScreenWidth(), GS.getScreenHeight());
-        GS.Pixels = new int[ GS.getScreenWidth() * GS.getScreenHeight()];
+        GS.pixels = new int[ GS.getScreenWidth() * GS.getScreenHeight()];
         GS.DepthBuffer = new float [GS.getScreenWidth() * GS.getScreenHeight()];
         imageView.setImage(writableImage);
+        pipelineProcessing.screenResize();
     }
 
     //основна функція відрисовки
@@ -345,11 +352,7 @@ public class runRendering extends Application {
 
         GS.Time = 0;
         //формування матриці перетворення для обєкту, порядок: розмір, поворот, переміщення
-        Matrix4D tr =  Matrix4D.scaleMatrix4(1, 1, 1).mult(
-                Matrix4D.rotationMatrix4(GS.Time * 100, GS.Time * 100, GS.Time * 100)
-        ).mult(
-                Matrix4D.translationMatrix4(0, 0, 4)
-        );
+        Matrix4D tr =  Matrix4D.scaleMatrix4(1, 1, 1);
 
         //монження матриці трансформації обєкту з матрицею трансформації камери, послідовність: камера, обєкт
         tr = Matrix4D.mult(GS.camera.getCameraTransform(), tr);
@@ -357,10 +360,12 @@ public class runRendering extends Application {
         //множення матриці трансофрмації обєку і камери з матрицею трасформації перспективи, послідовність: перспектив, інш.
         tr = Matrix4D.mult(GS.camera.getPerspectiveMatrix(), tr);
 
-        for (int i = 0; i < GS.Objects.size(); i++) {
-            GS.Objects.get(i).draw(tr);
-        }
+//        for (int i = 0; i < GS.Objects.size(); i++) {
+//            GS.Objects.get(i).draw(tr);
+//        }
 
+
+        pipelineProcessing.processing(tr);
 
 
 //        //формування матриці перетворення для обєкту, порядок: розмір, поворот, переміщення
@@ -393,7 +398,7 @@ public class runRendering extends Application {
     public static void fillBackground (int color) {
         for (int y = 0; y < GS.getScreenHeight(); y++) {
             for (int x = 0; x < GS.getScreenWidth(); x++) {
-                GS.Pixels[y * GS.getScreenWidth() + x] = color;
+                GS.pixels[y * GS.getScreenWidth() + x] = color;
                 GS.DepthBuffer[y * GS.getScreenWidth() + x] = 1.f;
             }
         }

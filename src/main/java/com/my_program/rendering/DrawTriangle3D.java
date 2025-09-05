@@ -297,39 +297,39 @@ public class DrawTriangle3D {
             Vec2D PixelVector3 = Vec2D.sub(PixelPoint, ProjectionPoint3);
 
             //довжина векторнионого добутку для вектору кожного ребра та вектору до точки
-            float BaseLengthVectorProduct1 = vectorProduct(PixelVector1, Edge1);
-            float BaseLengthVectorProduct2 = vectorProduct(PixelVector2, Edge2);
-            float BaseLengthVectorProduct3 = vectorProduct(PixelVector3, Edge3);
+            float baseLengthVectorProduct1 = vectorProduct(PixelVector1, Edge1);
+            float baseLengthVectorProduct2 = vectorProduct(PixelVector2, Edge2);
+            float baseLengthVectorProduct3 = vectorProduct(PixelVector3, Edge3);
 
 
             //проходимо по всім пікселям по екрану та перевіряємо чи порапляють вони в трикутник
             for (int y = minY; y < maxY; y++) {
 
                 //розрахунок довжини вектрного добутку відносно базової точки на y
-                float OffsetYLengthVectorProduct1 = BaseLengthVectorProduct1 - Edge1.x() * (y - minY);
-                float OffsetYLengthVectorProduct2 = BaseLengthVectorProduct2 - Edge2.x() * (y - minY);
-                float OffsetYLengthVectorProduct3 = BaseLengthVectorProduct3 - Edge3.x() * (y - minY);
+                float offsetYLengthVectorProduct1 = baseLengthVectorProduct1 - Edge1.x() * (y - minY);
+                float offsetYLengthVectorProduct2 = baseLengthVectorProduct2 - Edge2.x() * (y - minY);
+                float offsetYLengthVectorProduct3 = baseLengthVectorProduct3 - Edge3.x() * (y - minY);
 
                 for (int x = minX; x < maxX; x++) {
 
                     //Розрахунок остаточної довжини векторногодобутку вектору ребра та вектору до точки
                     //розраховується відносно базової точки з врахуванням зміщення x та y
-                    float LengthVectorProduct1 = OffsetYLengthVectorProduct1 + Edge1.y() * (x - minX);
-                    float LengthVectorProduct2 = OffsetYLengthVectorProduct2 + Edge2.y() * (x - minX);
-                    float LengthVectorProduct3 = OffsetYLengthVectorProduct3 + Edge3.y() * (x - minX);
+                    float lengthVectorProduct1 = offsetYLengthVectorProduct1 + Edge1.y() * (x - minX);
+                    float lengthVectorProduct2 = offsetYLengthVectorProduct2 + Edge2.y() * (x - minX);
+                    float lengthVectorProduct3 = offsetYLengthVectorProduct3 + Edge3.y() * (x - minX);
 
                     //перевірка чи потрапляє точка в трикутник
-                    if ((LengthVectorProduct1 <= 0 || (isTopLeft1 && LengthVectorProduct1 == 0.f)) &&
-                            (LengthVectorProduct2 <= 0 || (isTopLeft2 && LengthVectorProduct2 == 0.f)) &&
-                            (LengthVectorProduct3 <= 0 || (isTopLeft3 && LengthVectorProduct3 == 0.f))) {
+                    if ((lengthVectorProduct1 <= 0 || (isTopLeft1 && lengthVectorProduct1 == 0.f)) &&
+                            (lengthVectorProduct2 <= 0 || (isTopLeft2 && lengthVectorProduct2 == 0.f)) &&
+                            (lengthVectorProduct3 <= 0 || (isTopLeft3 && lengthVectorProduct3 == 0.f))) {
                         // положення точки в масиві пікселів та масиві глибин
                         int PixelID = y * GS.getScreenWidth() + x;
 
                         //коефіціенти для інтерполяції кольоровів/глибини в трикутнику
                         //заміненна дорога операція ділення на дешевшу множення
-                        float T1 = -LengthVectorProduct2 * ConverseBaryCentricDiv;
-                        float T2 = -LengthVectorProduct3 * ConverseBaryCentricDiv;
-                        float T3 = -LengthVectorProduct1 * ConverseBaryCentricDiv;
+                        float T1 = -lengthVectorProduct2 * ConverseBaryCentricDiv;
+                        float T2 = -lengthVectorProduct3 * ConverseBaryCentricDiv;
+                        float T3 = -lengthVectorProduct1 * ConverseBaryCentricDiv;
 
                         //глибина пікселя
                         float Depth = T1 * TransformPoint1.z() + T2 * TransformPoint2.z() + T3 * TransformPoint3.z();
@@ -349,7 +349,7 @@ public class DrawTriangle3D {
                             Vec2D Uv2 = Vec2D.mult(MainTriangles[TriangleID].UvPoints[1], T2).mult(ConverseW2);
                             Vec2D Uv3 = Vec2D.mult(MainTriangles[TriangleID].UvPoints[2], T3).mult(ConverseW3);
 
-                            GS.Pixels[PixelID] = texture.getColor(Uv1.add(Uv2).add(Uv3).div(OneOverW));
+                            GS.pixels[PixelID] = texture.getColor(Uv1.add(Uv2).add(Uv3).div(OneOverW));
                             GS.DepthBuffer[PixelID] = Depth;
                         }
                     }

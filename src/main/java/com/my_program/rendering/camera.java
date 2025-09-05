@@ -20,7 +20,7 @@ public class camera {
     public float FarZ = 10000;
 
     camera() {
-        this.Position = new Vec4D(0, 0, 1);
+        this.Position = new Vec4D(0, 0, -2);
         this.updatePerspective();
     }
 

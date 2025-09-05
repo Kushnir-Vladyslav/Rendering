@@ -143,21 +143,21 @@ public class triangle2D {
                 Vec2D PixelVector3 = Vec2D.sub(PixelPoint, ProjectionPoint3);
 
                 //довжина векторнионого добутку для вектору кожного ребра та вектору до точки
-                float LengthVectorProduct1 = vectorProduct(PixelVector1, Edge1);
-                float LengthVectorProduct2 = vectorProduct(PixelVector2, Edge2);
-                float LengthVectorProduct3 = vectorProduct(PixelVector3, Edge3);
+                float lengthVectorProduct1 = vectorProduct(PixelVector1, Edge1);
+                float lengthVectorProduct2 = vectorProduct(PixelVector2, Edge2);
+                float lengthVectorProduct3 = vectorProduct(PixelVector3, Edge3);
 
                 //перевірка чи потрапляє точка в трикутник
-                if ((LengthVectorProduct1 >= 0 || (isTopLeft1 && LengthVectorProduct1 == 0.f)) &&
-                        (LengthVectorProduct2 >= 0 || (isTopLeft2 && LengthVectorProduct2 == 0.f)) &&
-                        (LengthVectorProduct3 >= 0 || (isTopLeft3 && LengthVectorProduct3 == 0.f))) {
+                if ((lengthVectorProduct1 >= 0 || (isTopLeft1 && lengthVectorProduct1 == 0.f)) &&
+                        (lengthVectorProduct2 >= 0 || (isTopLeft2 && lengthVectorProduct2 == 0.f)) &&
+                        (lengthVectorProduct3 >= 0 || (isTopLeft3 && lengthVectorProduct3 == 0.f))) {
                     // положення точки в масиві пікселів та масиві глибин
                     int PixelID = y * GS.getScreenWidth() + x;
 
                     //коефіціенти для інтерполяції кольоровів/глибини в трикутнику
-                    float T1 = -LengthVectorProduct2 / baryCentricDiv;
-                    float T2 = -LengthVectorProduct3 / baryCentricDiv;
-                    float T3 = -LengthVectorProduct1 / baryCentricDiv;
+                    float T1 = -lengthVectorProduct2 / baryCentricDiv;
+                    float T2 = -lengthVectorProduct3 / baryCentricDiv;
+                    float T3 = -lengthVectorProduct1 / baryCentricDiv;
 
                     //глибина пікселя
                     float Depth = T1 / Depth1 + T2 / Depth2 + T3 / Depth3;
@@ -171,7 +171,7 @@ public class triangle2D {
                         // новий колір, з кольорами в діапазоні 0 ... 1
                         Vec4D NewColor = NewColorPart1.add(NewColorPart2).add(NewColorPart3);
 
-                        GS.Pixels[PixelID] = toRGBA(NewColor);
+                        GS.pixels[PixelID] = toRGBA(NewColor);
                         GS.DepthBuffer[PixelID] = Depth;
                     }
                 }

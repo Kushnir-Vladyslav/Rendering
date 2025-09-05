@@ -107,11 +107,25 @@ public class Vec4D {
         );
     }
 
+    public Vec4D add3D (Vec4D second) {
+        this.x += second.x;
+        this.y += second.y;
+        this.z += second.z;
+        return this;
+    }
+
     public Vec4D mult (float num) {
         this.x *= num;
         this.y *= num;
         this.z *= num;
         this.w *= num;
+        return this;
+    }
+
+    public Vec4D mult3D (float num) {
+        this.x *= num;
+        this.y *= num;
+        this.z *= num;
         return this;
     }
 
@@ -192,5 +206,10 @@ public class Vec4D {
     //функція для  проектування та малювання точки в кординатах відповідному цьому вектору
     public void draw (int color) {
         Perspective().draw(color);
+    }
+
+    @Override
+    public String toString() {
+        return "(" + x + ", " + y + ", " + z + ", " + w + ")";
     }
 }

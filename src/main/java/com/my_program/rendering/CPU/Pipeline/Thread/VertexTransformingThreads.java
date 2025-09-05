@@ -1,4 +1,4 @@
-package com.my_program.rendering.CPU.Pipeline;
+package com.my_program.rendering.CPU.Pipeline.Thread;
 
 import com.my_program.rendering.Matrix4D;
 import com.my_program.rendering.Vec4D;
@@ -10,22 +10,35 @@ public class VertexTransformingThreads extends RecursiveAction {
     private final Vec4D[] vertices;
     private Vec4D[] transformedVertices;
     private final Matrix4D transformer;
+    private final int numberOfTasks;
+
+    private int threadNum = 0;
+    public static final int POOL_SIZE = 256;
 
     public VertexTransformingThreads(
             int id,
             Vec4D[] vertices,
             Vec4D[] transformedVertices,
-            Matrix4D transformer)
+            Matrix4D transformer,
+            int numberOfTasks
+            )
     {
         this.id = id;
         this.vertices = vertices;
         this.transformedVertices = transformedVertices;
         this.transformer = transformer;
+        this.numberOfTasks = numberOfTasks;
     }
 
     @Override
     protected void compute() {
-        Vec4D vertex = vertices[id];
-        transformedVertices[id] = transformer.mult(vertex);
+        try {
+            Vec4D vertex = vertices[id];
+            transformedVertices[id] = transformer.mult(vertex);
+        } catch (Exception e) {
+            System.err.println(this.getClass().getSimpleName());
+            System.err.println(e.getMessage());
+            e.printStackTrace(System.err);
+        }
     }
 }

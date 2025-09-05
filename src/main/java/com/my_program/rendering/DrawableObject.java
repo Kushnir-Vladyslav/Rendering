@@ -37,7 +37,7 @@ public class DrawableObject {
         return texture;
     }
 
-    DrawableObject(Vec4D[] VerticesBuffer, Vec2D[] ObjectUv, int[] IndexBuffer, Texture texture) {
+    public DrawableObject(Vec4D[] VerticesBuffer, Vec2D[] ObjectUv, int[] IndexBuffer, Texture texture) {
         this.verticesBuffer = VerticesBuffer;
         this.objectUv = ObjectUv;
         this.indexBuffer = IndexBuffer;

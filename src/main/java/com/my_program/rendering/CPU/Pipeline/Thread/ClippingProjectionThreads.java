@@ -1,4 +1,4 @@
-package com.my_program.rendering.CPU.Pipeline;
+package com.my_program.rendering.CPU.Pipeline.Thread;
 
 import com.my_program.rendering.CPU.Buffers.ObjectMaterial;
 import com.my_program.rendering.Vec2D;
@@ -9,9 +9,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ClippingProjectionThreads extends RecursiveAction {
     private int id;
-    private Vec4D[] bufferPolygonsVertices;
-    private Vec2D[] bufferPolygonsUV;
-    private ObjectMaterial[] polygonMaterial;
+    private final Vec4D[] bufferPolygonsVertices;
+    private final Vec2D[] bufferPolygonsUV;
+    private final ObjectMaterial[] polygonMaterial;
     private Vec4D[] clippingPolygon;
     private Vec2D[] clippingPolygonsUV;
     private ObjectMaterial[] clippingPolygonMaterial;
@@ -40,33 +40,33 @@ public class ClippingProjectionThreads extends RecursiveAction {
 
     private boolean isInside(Vec4D vertex, int plane) {
         switch (plane) {
-            case 0: return vertex.x() >= -vertex.w(); // left
-            case 1: return vertex.x() <=  vertex.w(); // right
-            case 2: return vertex.y() >= -vertex.w(); // bottom
-            case 3: return vertex.y() <=  vertex.w(); // top
-            case 4: return vertex.z() >= -vertex.w(); // near
-            case 5: return vertex.z() <=  vertex.w(); // far
-            case 6: return vertex.w() >=    0.00001f; // w
+            case 0: return vertex.w() >=    0.00001f; // w
+            case 1: return vertex.x() >= -vertex.w(); // left
+            case 2: return vertex.x() <=  vertex.w(); // right
+            case 3: return vertex.y() >= -vertex.w(); // bottom
+            case 4: return vertex.y() <=  vertex.w(); // top
+            case 5: return vertex.z() >= -vertex.w(); // near
+            case 6: return vertex.z() <=  vertex.w(); // far
         }
         return false;
     }
 
     private float intersectionPoint(Vec4D a, Vec4D b, int plane) {
         switch (plane) {
-            case 0: return -(a.w() + a.x()) /
-                    ((b.x() - a.x()) + (b.w() - a.w()));  // left
-            case 1: return (a.w() - a.x()) /
-                    ((b.x() - a.x()) - (b.w() - a.w())); // right
-            case 2: return -(a.w() + a.y()) /
-                    ((b.y() - a.y()) + (b.w() - a.w())); // bottom
-            case 3: return (a.w() - a.y()) /
-                    ((b.y() - a.y()) - (b.w() - a.w())); // top
-            case 4: return -(a.z() + a.w()) /
-                    ((b.z() - a.z()) + (b.w() - a.w()));  // near
-            case 5: return (a.w() - a.z()) /
-                    ((b.z() - a.z()) - (b.w() - a.w())); // far
-            case 6: return (0.00001f - a.w()) /
+            case 0: return (0.00001f - a.w()) /
                     (b.w() - a.w()); // w
+            case 1: return -(a.w() + a.x()) /
+                    ((b.x() - a.x()) + (b.w() - a.w()));  // left
+            case 2: return (a.w() - a.x()) /
+                    ((b.x() - a.x()) - (b.w() - a.w())); // right
+            case 3: return -(a.w() + a.y()) /
+                    ((b.y() - a.y()) + (b.w() - a.w())); // bottom
+            case 4: return (a.w() - a.y()) /
+                    ((b.y() - a.y()) - (b.w() - a.w())); // top
+            case 5: return -(a.z() + a.w()) /
+                    ((b.z() - a.z()) + (b.w() - a.w()));  // near
+            case 6: return (a.w() - a.z()) /
+                    ((b.z() - a.z()) - (b.w() - a.w())); // far
         }
         return 0;
     }
@@ -126,50 +126,55 @@ public class ClippingProjectionThreads extends RecursiveAction {
 
     @Override
     protected void compute() {
+        try {
+            Vec4D tempVertex1[] = new Vec4D[16];
+            Vec4D tempVertex2[] = new Vec4D[16];
 
-        Vec4D tempVertex1[] = new Vec4D[16];
-        Vec4D tempVertex2[] = new Vec4D[16];
-
-        Vec2D tempUV1[] = new Vec2D[16];
-        Vec2D tempUV2[] = new Vec2D[16];
+            Vec2D tempUV1[] = new Vec2D[16];
+            Vec2D tempUV2[] = new Vec2D[16];
 
 
-        int counter = 3;
+            int counter = 3;
 
-        for (int i = 0; i < 3; i++) {
-            tempVertex1[i] = bufferPolygonsVertices[id * 3 + i];
-            tempUV1[i] = bufferPolygonsUV[id * 3 + i];
-        }
-
-        for (int i = 0; i < 7; i++) {
-            counter = clippingAlongPlane(tempVertex1, tempVertex2,
-                    tempUV1, tempUV2, i, counter);
-
-            if(counter < 3) {
-                return;
+            for (int i = 0; i < 3; i++) {
+                tempVertex1[i] = bufferPolygonsVertices[id * 3 + i];
+                tempUV1[i] = bufferPolygonsUV[id * 3 + i];
             }
 
-            Vec4D[] tempV = tempVertex1;
-            tempVertex1 = tempVertex2;
-            tempVertex2 = tempV;
+            for (int i = 0; i < 7; i++) {
+                counter = clippingAlongPlane(tempVertex1, tempVertex2,
+                        tempUV1, tempUV2, i, counter);
 
-            Vec2D[] tempUV = tempUV1;
-            tempUV1 = tempUV2;
-            tempUV2 = tempUV;
-        }
+                if (counter < 3) {
+                    return;
+                }
 
-        int clippingPolygonID = clippingCounter.getAndAdd(counter - 2);
-        ObjectMaterial material = polygonMaterial[id];
+                Vec4D[] tempV = tempVertex1;
+                tempVertex1 = tempVertex2;
+                tempVertex2 = tempV;
 
-        for (int i = 0; i < counter - 2; i++) {
-            clippingPolygon[(clippingPolygonID + i) * 3] = tempVertex1[0];
-            clippingPolygonsUV[(clippingPolygonID + i) * 3] = tempUV1[0];
-            for (int j = 1; j < 3; j++) {
-                clippingPolygon[(clippingPolygonID + i) * 3 + j] = tempVertex1[i + j];
-                clippingPolygonsUV[(clippingPolygonID + i) * 3 + j] = tempUV1[i + j];
+                Vec2D[] tempUV = tempUV1;
+                tempUV1 = tempUV2;
+                tempUV2 = tempUV;
             }
 
-            clippingPolygonMaterial[clippingPolygonID + i] = material;
+            int clippingPolygonID = clippingCounter.getAndAdd(counter - 2);
+            ObjectMaterial material = polygonMaterial[id];
+
+            for (int i = 0; i < counter - 2; i++) {
+                clippingPolygon[(clippingPolygonID + i) * 3] = tempVertex1[0];
+                clippingPolygonsUV[(clippingPolygonID + i) * 3] = tempUV1[0];
+                for (int j = 1; j < 3; j++) {
+                    clippingPolygon[(clippingPolygonID + i) * 3 + j] = tempVertex1[i + j];
+                    clippingPolygonsUV[(clippingPolygonID + i) * 3 + j] = tempUV1[i + j];
+                }
+
+                clippingPolygonMaterial[clippingPolygonID + i] = material;
+            }
+        } catch (Exception e) {
+            System.err.println(this.getClass().getSimpleName());
+            System.err.println(e.getMessage());
+            e.printStackTrace(System.err);
         }
     }
 }

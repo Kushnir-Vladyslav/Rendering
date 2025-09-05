@@ -11,7 +11,7 @@ public class GS {
     private static int ScreenHeight = 400;
 
     //масив пікселів що відображаються на екрані
-    public static int[] Pixels;
+    public static int[] pixels;
 
     //масив глибин пікселів
     public static float [] DepthBuffer;
@@ -57,8 +57,6 @@ public class GS {
 
     ///////
     public static Buffers buffers = new Buffers();
-
-    ForkJoinPool pool = new ForkJoinPool(18);
 
 
 
