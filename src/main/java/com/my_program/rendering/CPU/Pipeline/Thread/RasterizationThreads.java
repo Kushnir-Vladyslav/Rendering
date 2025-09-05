@@ -6,13 +6,10 @@ import com.my_program.rendering.Texture;
 import com.my_program.rendering.Vec2D;
 import com.my_program.rendering.Vec4D;
 
-import java.util.Arrays;
-import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
-public class RasterizationThreads extends RecursiveAction {
-    private int id;
+public class RasterizationThreads extends KernelCPU {
     private Vec4D[] vertexBuffer;
     private Vec2D[] bufferUV;
     private ObjectMaterial[] materials;
@@ -22,6 +19,7 @@ public class RasterizationThreads extends RecursiveAction {
     private AtomicInteger pixelCounter;
     private int width;
     private int height;
+    private final int numberOfTasks;
 
     public RasterizationThreads(
             int id,
@@ -33,10 +31,11 @@ public class RasterizationThreads extends RecursiveAction {
             AtomicIntegerArray heads,
             AtomicInteger pixelCounter,
             int width,
-            int height
+            int height,
+            AtomicInteger clippingCounter
     )
     {
-        this.id = id;
+        this.idWorkGroup = id;
         this.vertexBuffer = vertexBuffer;
         this.bufferUV = bufferUV;
         this.materials = materials;
@@ -46,6 +45,7 @@ public class RasterizationThreads extends RecursiveAction {
         this.pixelCounter = pixelCounter;
         this.width = width;
         this.height = height;
+        this.numberOfTasks = clippingCounter.get();
     }
 
     private float vectorProduct (Vec2D TriangleEdge, Vec2D ToPointVector) {
@@ -60,8 +60,13 @@ public class RasterizationThreads extends RecursiveAction {
     }
 
     @Override
-    protected void compute() {
+    protected void thread() {
         try {
+            int id = get_global_id();
+            if (id >= numberOfTasks) {
+                return;
+            }
+
             Vec4D vertex1 = vertexBuffer[id * 3 + 0];
             Vec4D vertex2 = vertexBuffer[id * 3 + 1];
             Vec4D vertex3 = vertexBuffer[id * 3 + 2];

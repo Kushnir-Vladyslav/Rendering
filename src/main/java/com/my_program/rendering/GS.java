@@ -23,7 +23,7 @@ public class GS {
     public static Vector<DrawableObject> Objects = new Vector<>();
 
     // швидкість преміщення
-    public static float Speed = 100.f;
+    public static float Speed = 200.f;
 
     // Камера
     public static camera camera = new camera();

@@ -6,8 +6,7 @@ import com.my_program.rendering.Vec4D;
 
 import java.util.concurrent.RecursiveAction;
 
-public class PolygonFormationThreads extends RecursiveAction {
-    private int id;
+public class PolygonFormationThreads extends KernelCPU {
     private final Vec4D[] transformedVertices;
     private Vec4D[] polygons;
     private final Vec2D[] bufferUV;
@@ -15,6 +14,7 @@ public class PolygonFormationThreads extends RecursiveAction {
     private final ObjectMaterial[] vertexMaterial;
     private ObjectMaterial[] polygonMaterial;
     private final int[] bufferIndexes;
+    private final int numberOfTasks;
 
 
     public PolygonFormationThreads(
@@ -25,10 +25,11 @@ public class PolygonFormationThreads extends RecursiveAction {
             Vec2D[] bufferPolygonsUV,
             ObjectMaterial[] vertexMaterial,
             ObjectMaterial[] polygonMaterial,
-            int[] bufferIndexes
+            int[] bufferIndexes,
+            int numberOfTasks
     )
     {
-        this.id = id;
+        this.idWorkGroup = id;
         this.transformedVertices = transformedVertices;
         this.polygons = polygons;
         this.bufferUV = bufferUV;
@@ -36,11 +37,17 @@ public class PolygonFormationThreads extends RecursiveAction {
         this.vertexMaterial = vertexMaterial;
         this.polygonMaterial = polygonMaterial;
         this.bufferIndexes = bufferIndexes;
+        this.numberOfTasks = numberOfTasks;
     }
 
     @Override
-    protected void compute() {
+    protected void thread() {
         try {
+            int id = get_global_id();
+            if (id >= numberOfTasks) {
+                return;
+            }
+
             int vertexIndex1 = bufferIndexes[id * 3 + 0];
             int vertexIndex2 = bufferIndexes[id * 3 + 1];
             int vertexIndex3 = bufferIndexes[id * 3 + 2];

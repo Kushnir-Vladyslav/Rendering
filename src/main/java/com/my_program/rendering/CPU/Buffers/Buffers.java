@@ -27,7 +27,7 @@ public class Buffers {
 
     //transformed buffers
     public static Vec4D[] bufferTransformedVertices;
-    public static int numberVertexForTransform = 0;
+    public static int numberVertexes = 0;
 
     //primer polygons
     public static Vec4D[] bufferPolygonsVertices;

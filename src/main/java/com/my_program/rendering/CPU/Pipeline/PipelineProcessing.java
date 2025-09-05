@@ -34,22 +34,23 @@ public class PipelineProcessing {
         BuffersPreparation.clearCounters();
 
         Buffers.transformMatrix = transformer;
-        Buffers.numberVertexForTransform = Buffers.vertexNum;
+        Buffers.numberVertexes = Buffers.vertexNum;
 
-        for (int i = 0; i < Buffers.vertexNum; i++) {
+        for (int i = 0; i < Math.ceil((double) Buffers.vertexNum / VertexTransformingThreads.POOL_SIZE); i++) {
             pool.submit(new VertexTransformingThreads(
                     i,
                     Buffers.bufferVertices,
                     Buffers.bufferTransformedVertices,
                     Buffers.transformMatrix,
-                    Buffers.numberVertexForTransform
+                    Buffers.numberVertexes
             ));
         }
 
         pool.awaitQuiescence(5000, TimeUnit.MILLISECONDS);
 
+        Buffers.numberVertexes = Buffers.indexNum / 3;
 
-        for (int i = 0; i < Buffers.indexNum / 3; i++) {
+        for (int i = 0; i < Math.ceil((double) Buffers.indexNum / (3 * PolygonFormationThreads.POOL_SIZE)); i++) {
             pool.submit(new PolygonFormationThreads(
                     i,
                     Buffers.bufferTransformedVertices,
@@ -58,13 +59,14 @@ public class PipelineProcessing {
                     Buffers.bufferPolygonsUV,
                     Buffers.vertexMaterial,
                     Buffers.polygonMaterial,
-                    Buffers.bufferIndexes
+                    Buffers.bufferIndexes,
+                    Buffers.numberVertexes
             ));
         }
 
         pool.awaitQuiescence(5000, TimeUnit.MILLISECONDS);
 
-        for (int i = 0; i < Buffers.indexNum / 3; i++) {
+        for (int i = 0; i < Math.ceil((double) Buffers.indexNum / (3 * ClippingProjectionThreads.POOL_SIZE)); i++) {
             pool.submit(new ClippingProjectionThreads(
                     i,
                     Buffers.bufferPolygonsVertices,
@@ -73,7 +75,8 @@ public class PipelineProcessing {
                     Buffers.clippingPolygon,
                     Buffers.clippingPolygonsUV,
                     Buffers.clippingPolygonMaterial,
-                    Buffers.clippingCounter
+                    Buffers.clippingCounter,
+                    Buffers.numberVertexes
             ));
         }
 
@@ -81,18 +84,19 @@ public class PipelineProcessing {
 
         int numOfVertex = Buffers.clippingCounter.get(); //like read from GPU
 
-        for (int i = 0; i < numOfVertex * 3; i++) {
+        for (int i = 0; i < Math.ceil((double) numOfVertex * 3 / PerspectiveDivideAndViewportTransformThreads.POOL_SIZE); i++) {
             pool.submit(new PerspectiveDivideAndViewportTransformThreads(
                     i,
                     Buffers.clippingPolygon,
                     Buffers.width,
-                    Buffers.height
+                    Buffers.height,
+                    Buffers.clippingCounter
             ));
         }
 
         pool.awaitQuiescence(5000, TimeUnit.MILLISECONDS);
 
-        for (int i = 0; i < numOfVertex; i++) {
+        for (int i = 0; i < Math.ceil((double) numOfVertex / RasterizationThreads.POOL_SIZE); i++) {
             pool.submit(new RasterizationThreads(
                     i,
                     Buffers.clippingPolygon,
@@ -103,18 +107,21 @@ public class PipelineProcessing {
                     Buffers.heads,
                     Buffers.pixelCounter,
                     Buffers.width,
-                    Buffers.height
+                    Buffers.height,
+                    Buffers.clippingCounter
             ));
         }
 
         pool.awaitQuiescence(5000, TimeUnit.MILLISECONDS);
 
-        for (int i = 0; i < GS.getScreenWidth() * GS.getScreenHeight(); i++) {
+        for (int i = 0; i < Math.ceil((double) GS.getScreenWidth() * GS.getScreenHeight() / FragmentProcessing.POOL_SIZE); i++) {
             pool.submit(new FragmentProcessing(
                     i,
                     Buffers.fragments,
                     Buffers.heads,
-                    Buffers.pixels
+                    Buffers.pixels,
+                    Buffers.width,
+                    Buffers.height
             ));
         }
 

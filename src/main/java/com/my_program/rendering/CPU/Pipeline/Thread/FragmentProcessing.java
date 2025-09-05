@@ -6,22 +6,25 @@ import com.my_program.rendering.Vec4D;
 import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
-public class FragmentProcessing extends RecursiveAction {
-    private int id;
+public class FragmentProcessing extends KernelCPU {
     private PixelLinkedList[] pixelLinkedList;
     private AtomicIntegerArray heads;
     private int[] pixels;
+    private final int numberOfTasks;
 
     public FragmentProcessing(
             int id,
             PixelLinkedList[] pixelLinkedList,
             AtomicIntegerArray heads,
-            int[] pixels
+            int[] pixels,
+            int width,
+            int height
     ) {
-        this.id = id;
+        this.idWorkGroup = id;
         this.pixelLinkedList = pixelLinkedList;
         this.heads = heads;
         this.pixels = pixels;
+        this.numberOfTasks = width * height;
     }
 
     private Vec4D colorIntToARGB(int color) {
@@ -42,8 +45,13 @@ public class FragmentProcessing extends RecursiveAction {
     }
 
     @Override
-    protected void compute() {
+    protected void thread() {
         try {
+            int id = get_global_id();
+            if (id >= numberOfTasks) {
+                return;
+            }
+
             int fragmentCounter = 0;
             int fragmentPointer = heads.get(id);
 

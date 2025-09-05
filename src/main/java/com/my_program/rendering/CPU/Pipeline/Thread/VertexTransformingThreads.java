@@ -5,15 +5,11 @@ import com.my_program.rendering.Vec4D;
 
 import java.util.concurrent.RecursiveAction;
 
-public class VertexTransformingThreads extends RecursiveAction {
-    private final int id;
+public class VertexTransformingThreads extends KernelCPU {
     private final Vec4D[] vertices;
     private Vec4D[] transformedVertices;
     private final Matrix4D transformer;
     private final int numberOfTasks;
-
-    private int threadNum = 0;
-    public static final int POOL_SIZE = 256;
 
     public VertexTransformingThreads(
             int id,
@@ -23,7 +19,7 @@ public class VertexTransformingThreads extends RecursiveAction {
             int numberOfTasks
             )
     {
-        this.id = id;
+        this.idWorkGroup = id;
         this.vertices = vertices;
         this.transformedVertices = transformedVertices;
         this.transformer = transformer;
@@ -31,8 +27,13 @@ public class VertexTransformingThreads extends RecursiveAction {
     }
 
     @Override
-    protected void compute() {
+    protected void thread() {
         try {
+            int id = get_global_id();
+            if (id >= numberOfTasks) {
+                return;
+            }
+
             Vec4D vertex = vertices[id];
             transformedVertices[id] = transformer.mult(vertex);
         } catch (Exception e) {

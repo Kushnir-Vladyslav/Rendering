@@ -7,8 +7,7 @@ import com.my_program.rendering.Vec4D;
 import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ClippingProjectionThreads extends RecursiveAction {
-    private int id;
+public class ClippingProjectionThreads extends KernelCPU {
     private final Vec4D[] bufferPolygonsVertices;
     private final Vec2D[] bufferPolygonsUV;
     private final ObjectMaterial[] polygonMaterial;
@@ -16,6 +15,7 @@ public class ClippingProjectionThreads extends RecursiveAction {
     private Vec2D[] clippingPolygonsUV;
     private ObjectMaterial[] clippingPolygonMaterial;
     private AtomicInteger clippingCounter;
+    private final int numberOfTasks;
 
     public ClippingProjectionThreads(
             int id,
@@ -25,10 +25,11 @@ public class ClippingProjectionThreads extends RecursiveAction {
             Vec4D[] clippingPolygon,
             Vec2D[] clippingPolygonsUV,
             ObjectMaterial[] clippingPolygonMaterial,
-            AtomicInteger clippingCounter
+            AtomicInteger clippingCounter,
+            int numberOfTasks
     )
     {
-        this.id = id;
+        this.idWorkGroup = id;
         this.bufferPolygonsVertices = bufferPolygonsVertices;
         this.bufferPolygonsUV = bufferPolygonsUV;
         this.polygonMaterial = polygonMaterial;
@@ -36,6 +37,7 @@ public class ClippingProjectionThreads extends RecursiveAction {
         this.clippingPolygonsUV = clippingPolygonsUV;
         this.clippingPolygonMaterial = clippingPolygonMaterial;
         this.clippingCounter = clippingCounter;
+        this.numberOfTasks = numberOfTasks;
     }
 
     private boolean isInside(Vec4D vertex, int plane) {
@@ -125,8 +127,13 @@ public class ClippingProjectionThreads extends RecursiveAction {
 
 
     @Override
-    protected void compute() {
+    protected void thread() {
         try {
+            int id = get_global_id();
+            if (id >= numberOfTasks) {
+                return;
+            }
+
             Vec4D tempVertex1[] = new Vec4D[16];
             Vec4D tempVertex2[] = new Vec4D[16];
 
