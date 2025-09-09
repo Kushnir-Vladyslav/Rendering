@@ -7,11 +7,11 @@ import com.my_program.rendering.Vec4D;
 import java.util.concurrent.RecursiveAction;
 
 public class PolygonFormationThreads extends KernelCPU {
-    private final Vec4D[] transformedVertices;
+    private final float[] transformedVertices;
     private Vec4D[] polygons;
-    private final Vec2D[] bufferUV;
+    private final float[] bufferUV;
     private Vec2D[] bufferPolygonsUV;
-    private final ObjectMaterial[] vertexMaterial;
+    private final int[] vertexMaterial;
     private ObjectMaterial[] polygonMaterial;
     private final int[] bufferIndexes;
     private final int numberOfTasks;
@@ -19,11 +19,11 @@ public class PolygonFormationThreads extends KernelCPU {
 
     public PolygonFormationThreads(
             int id,
-            Vec4D[] transformedVertices,
+            float[] transformedVertices,
             Vec4D[] polygons,
-            Vec2D[] bufferUV,
+            float[] bufferUV,
             Vec2D[] bufferPolygonsUV,
-            ObjectMaterial[] vertexMaterial,
+            int[] vertexMaterial,
             ObjectMaterial[] polygonMaterial,
             int[] bufferIndexes,
             int numberOfTasks
@@ -48,29 +48,21 @@ public class PolygonFormationThreads extends KernelCPU {
                 return;
             }
 
-            int vertexIndex1 = bufferIndexes[id * 3 + 0];
-            int vertexIndex2 = bufferIndexes[id * 3 + 1];
-            int vertexIndex3 = bufferIndexes[id * 3 + 2];
+            for (int i = 0; i < 3; i++) {
+                int vertexIndex = bufferIndexes[id * 3 + i];
+                polygons[id * 3 + i] = new Vec4D(
+                        transformedVertices[vertexIndex * 4 + 0],
+                        transformedVertices[vertexIndex * 4 + 1],
+                        transformedVertices[vertexIndex * 4 + 2],
+                        transformedVertices[vertexIndex * 4 + 3]
+                );
+                bufferPolygonsUV[id * 3 + i] = new Vec2D(
+                        bufferUV[vertexIndex * 2 + 0],
+                        bufferUV[vertexIndex * 2 + 1]
+                );
+            }
 
-            Vec4D vertex1 = transformedVertices[vertexIndex1];
-            Vec4D vertex2 = transformedVertices[vertexIndex2];
-            Vec4D vertex3 = transformedVertices[vertexIndex3];
-
-            Vec2D UV1 = bufferUV[vertexIndex1];
-            Vec2D UV2 = bufferUV[vertexIndex2];
-            Vec2D UV3 = bufferUV[vertexIndex3];
-
-            ObjectMaterial material = vertexMaterial[vertexIndex1];
-
-            polygons[id * 3 + 0] = vertex1;
-            polygons[id * 3 + 1] = vertex2;
-            polygons[id * 3 + 2] = vertex3;
-
-            bufferPolygonsUV[id * 3 + 0] = UV1;
-            bufferPolygonsUV[id * 3 + 1] = UV2;
-            bufferPolygonsUV[id * 3 + 2] = UV3;
-
-            polygonMaterial[id] = material;
+            polygonMaterial[id] = new ObjectMaterial(0,0, vertexMaterial[bufferIndexes[id * 3]]);
         } catch (Exception e) {
             System.err.println(this.getClass().getSimpleName());
             System.err.println(e.getMessage());

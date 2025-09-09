@@ -3,18 +3,17 @@ package com.my_program.rendering.CPU.Pipeline.Thread;
 import com.my_program.rendering.Matrix4D;
 import com.my_program.rendering.Vec4D;
 
-import java.util.concurrent.RecursiveAction;
 
 public class VertexTransformingThreads extends KernelCPU {
-    private final Vec4D[] vertices;
-    private Vec4D[] transformedVertices;
+    private final float[] vertices;
+    private float[] transformedVertices;
     private final Matrix4D transformer;
     private final int numberOfTasks;
 
     public VertexTransformingThreads(
             int id,
-            Vec4D[] vertices,
-            Vec4D[] transformedVertices,
+            float[] vertices,
+            float[] transformedVertices,
             Matrix4D transformer,
             int numberOfTasks
             )
@@ -34,8 +33,26 @@ public class VertexTransformingThreads extends KernelCPU {
                 return;
             }
 
-            Vec4D vertex = vertices[id];
-            transformedVertices[id] = transformer.mult(vertex);
+            float x = 0;
+            float y = 0;
+            float z = 0;
+            float w = 0;
+
+            Vec4D[] trans = transformer.getMatrixData();
+
+            for (int i = 0; i < 4; i++) {
+                float ver = vertices[id * 4 + i];
+                x += trans[i].x() * ver;
+                y += trans[i].y() * ver;
+                z += trans[i].z() * ver;
+                w += trans[i].w() * ver;
+            }
+
+            transformedVertices[id * 4 + 0] = x;
+            transformedVertices[id * 4 + 1] = y;
+            transformedVertices[id * 4 + 2] = z;
+            transformedVertices[id * 4 + 3] = w;
+
         } catch (Exception e) {
             System.err.println(this.getClass().getSimpleName());
             System.err.println(e.getMessage());

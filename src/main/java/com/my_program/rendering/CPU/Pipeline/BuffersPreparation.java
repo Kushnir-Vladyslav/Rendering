@@ -36,9 +36,9 @@ public class BuffersPreparation {
             numOfVertex[i + 1] = numOfVertex[i] + objects.get(i).getNumVertices();
         }
 
-        Buffers.bufferVertices = new Vec4D[numOfVertex[objects.size()]];
-        Buffers.bufferUV = new Vec2D[numOfVertex[objects.size()]];
-        Buffers.vertexMaterial = new ObjectMaterial[numOfVertex[objects.size()]];
+        Buffers.bufferVertices = new float[numOfVertex[objects.size()] * 4];
+        Buffers.bufferUV = new float[numOfVertex[objects.size()] * 2];
+        Buffers.vertexMaterial = new int[numOfVertex[objects.size()]];
 
         Buffers.textures = new Texture[objects.size()];
 
@@ -47,13 +47,20 @@ public class BuffersPreparation {
             Buffers.textures[i] = object.getTexture();
 
             for(int j = 0; j < object.getNumVertices(); j++) {
-                Buffers.bufferVertices[numOfVertex[i] + j] = object.getVerticesBuffer()[j];
-                Buffers.bufferUV[numOfVertex[i] + j] = object.getUVBuffer()[j];
-                Buffers.vertexMaterial[numOfVertex[i] + j] = new ObjectMaterial(
-                        Buffers.textures[i].getTextureWidth(),
-                        Buffers.textures[i].getTextureHeight(),
-                        i
-                );
+//                Buffers.bufferVertices[numOfVertex[i] + j] = object.getVerticesBuffer()[j];
+
+                Buffers.bufferVertices[(numOfVertex[i]  + j) *  4 + 0] = object.getVerticesBuffer()[j].x();
+                Buffers.bufferVertices[(numOfVertex[i]  + j) *  4 + 1] = object.getVerticesBuffer()[j].y();
+                Buffers.bufferVertices[(numOfVertex[i]  + j) *  4 + 2] = object.getVerticesBuffer()[j].z();
+                Buffers.bufferVertices[(numOfVertex[i]  + j) *  4 + 3] = object.getVerticesBuffer()[j].w();
+
+//                Buffers.bufferUV[numOfVertex[i] + j] = object.getUVBuffer()[j];
+
+                Buffers.bufferUV[(numOfVertex[i] + j) * 2 + 0] = object.getUVBuffer()[j].x();
+                Buffers.bufferUV[(numOfVertex[i] + j) * 2 + 1] = object.getUVBuffer()[j].y();
+
+
+                Buffers.vertexMaterial[numOfVertex[i] + j] = i;
             }
         }
 
@@ -76,7 +83,7 @@ public class BuffersPreparation {
         }
 
         //transformed buffers
-        Buffers.bufferTransformedVertices = new Vec4D[numOfVertex[objects.size()]];
+        Buffers.bufferTransformedVertices = new float[numOfVertex[objects.size()] * 4];
 
         //primer polygons
         Buffers.bufferPolygonsVertices = new Vec4D[Buffers.bufferObjectsRef[objects.size()]];

@@ -102,6 +102,10 @@ public class Matrix4D {
         return rotationMatrix4(Vector.x(), Vector.y(),Vector.z());
     }
 
+    public Vec4D[] getMatrixData() {
+        return V;
+    }
+
     @Override
     public Matrix4D clone () {
         return new Matrix4D(
