@@ -30,9 +30,9 @@ public class Buffers {
     public static int numberVertexes = 0;
 
     //primer polygons
-    public static Vec4D[] bufferPolygonsVertices;
-    public static Vec2D[] bufferPolygonsUV;
-    public static ObjectMaterial[] polygonMaterial;
+    public static float[] bufferPolygonsVertices;
+    public static float[] bufferPolygonsUV;
+    public static int[] polygonMaterial;
 
     //Clipping polygons
     public static Vec4D[] clippingPolygon;

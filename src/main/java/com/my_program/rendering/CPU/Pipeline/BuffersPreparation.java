@@ -86,9 +86,9 @@ public class BuffersPreparation {
         Buffers.bufferTransformedVertices = new float[numOfVertex[objects.size()] * 4];
 
         //primer polygons
-        Buffers.bufferPolygonsVertices = new Vec4D[Buffers.bufferObjectsRef[objects.size()]];
-        Buffers.bufferPolygonsUV = new Vec2D[Buffers.bufferObjectsRef[objects.size()]];
-        Buffers.polygonMaterial = new ObjectMaterial[Buffers.bufferObjectsRef[objects.size()] / 3];
+        Buffers.bufferPolygonsVertices = new float[Buffers.bufferObjectsRef[objects.size()] * 4];
+        Buffers.bufferPolygonsUV = new float[Buffers.bufferObjectsRef[objects.size()] * 2];
+        Buffers.polygonMaterial = new int[Buffers.bufferObjectsRef[objects.size()] / 3];
 
         //clipped polygons
         Buffers.clippingPolygon = new Vec4D[Buffers.bufferObjectsRef[objects.size()] * CLIPPING_MULTIPLIER];

@@ -8,11 +8,11 @@ import java.util.concurrent.RecursiveAction;
 
 public class PolygonFormationThreads extends KernelCPU {
     private final float[] transformedVertices;
-    private Vec4D[] polygons;
+    private float[] polygons;
     private final float[] bufferUV;
-    private Vec2D[] bufferPolygonsUV;
+    private float[] bufferPolygonsUV;
     private final int[] vertexMaterial;
-    private ObjectMaterial[] polygonMaterial;
+    private int[] polygonMaterial;
     private final int[] bufferIndexes;
     private final int numberOfTasks;
 
@@ -20,11 +20,11 @@ public class PolygonFormationThreads extends KernelCPU {
     public PolygonFormationThreads(
             int id,
             float[] transformedVertices,
-            Vec4D[] polygons,
+            float[] polygons,
             float[] bufferUV,
-            Vec2D[] bufferPolygonsUV,
+            float[] bufferPolygonsUV,
             int[] vertexMaterial,
-            ObjectMaterial[] polygonMaterial,
+            int[] polygonMaterial,
             int[] bufferIndexes,
             int numberOfTasks
     )
@@ -49,20 +49,13 @@ public class PolygonFormationThreads extends KernelCPU {
             }
 
             for (int i = 0; i < 3; i++) {
-                int vertexIndex = bufferIndexes[id * 3 + i];
-                polygons[id * 3 + i] = new Vec4D(
-                        transformedVertices[vertexIndex * 4 + 0],
-                        transformedVertices[vertexIndex * 4 + 1],
-                        transformedVertices[vertexIndex * 4 + 2],
-                        transformedVertices[vertexIndex * 4 + 3]
-                );
-                bufferPolygonsUV[id * 3 + i] = new Vec2D(
-                        bufferUV[vertexIndex * 2 + 0],
-                        bufferUV[vertexIndex * 2 + 1]
-                );
+                int vertexID = id * 3 + i;
+                int vertexIndex = bufferIndexes[vertexID];
+                System.arraycopy(transformedVertices, vertexIndex * 4, polygons, vertexID * 4, 4);
+                System.arraycopy(bufferUV, vertexIndex * 2, bufferPolygonsUV, vertexID * 2, 2);
             }
 
-            polygonMaterial[id] = new ObjectMaterial(0,0, vertexMaterial[bufferIndexes[id * 3]]);
+            polygonMaterial[id] = vertexMaterial[bufferIndexes[id * 3]];
         } catch (Exception e) {
             System.err.println(this.getClass().getSimpleName());
             System.err.println(e.getMessage());
