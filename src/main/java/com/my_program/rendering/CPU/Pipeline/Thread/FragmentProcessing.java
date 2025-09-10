@@ -106,6 +106,7 @@ public class FragmentProcessing extends KernelCPU {
             System.err.println(this.getClass().getSimpleName());
             System.err.println(e.getMessage());
             e.printStackTrace(System.err);
+            System.err.println();
         }
     }
 }

@@ -10,9 +10,9 @@ public class ClippingProjectionThreads extends KernelCPU {
     private final float[] bufferPolygonsVertices;
     private final float[] bufferPolygonsUV;
     private final int[] polygonMaterial;
-    private Vec4D[] clippingPolygon;
-    private Vec2D[] clippingPolygonsUV;
-    private ObjectMaterial[] clippingPolygonMaterial;
+    private float[] clippingPolygon;
+    private float[] clippingPolygonsUV;
+    private int[] clippingPolygonMaterial;
     private AtomicInteger clippingCounter;
     private final int numberOfTasks;
 
@@ -27,9 +27,9 @@ public class ClippingProjectionThreads extends KernelCPU {
             float[] bufferPolygonsVertices,
             float[] bufferPolygonsUV,
             int[] polygonMaterial,
-            Vec4D[] clippingPolygon,
-            Vec2D[] clippingPolygonsUV,
-            ObjectMaterial[] clippingPolygonMaterial,
+            float[] clippingPolygon,
+            float[] clippingPolygonsUV,
+            int[] clippingPolygonMaterial,
             AtomicInteger clippingCounter,
             int numberOfTasks
     )
@@ -198,31 +198,15 @@ public class ClippingProjectionThreads extends KernelCPU {
             }
 
             int clippingPolygonID = clippingCounter.getAndAdd(counter - 2);
-            ObjectMaterial material = new ObjectMaterial(0, 0, polygonMaterial[id]);
+            int material = polygonMaterial[id];
 
             for (int i = 0; i < counter - 2; i++) {
-//                System.arraycopy(tempVertex1, 0, clippingPolygon, (clippingPolygonID + i) * 3 * 4, 4);
-//                System.arraycopy(tempUV1, 0, clippingPolygonsUV, (clippingPolygonID + i) * 3 * 2, 2);
-                clippingPolygon[(clippingPolygonID + i) * 3] = new Vec4D(
-                        tempVertex1[0], tempVertex1[1], tempVertex1[2], tempVertex1[3]
-                );
-                clippingPolygonsUV[(clippingPolygonID + i) * 3] = new Vec2D(
-                        tempUV1[0], tempUV1[1]
-                );
+                System.arraycopy(tempVertex1, 0, clippingPolygon, (clippingPolygonID + i) * 3 * 4, 4);
+                System.arraycopy(tempUV1, 0, clippingPolygonsUV, (clippingPolygonID + i) * 3 * 2, 2);
 
                 for (int j = 1; j < 3; j++) {
-//                    System.arraycopy(tempVertex1, (i + j) * 4, clippingPolygon, ((clippingPolygonID + i) * 3 + j) * 4, 4);
-//                    System.arraycopy(tempUV1, (i + j) * 2, clippingPolygonsUV, ((clippingPolygonID + i) * 3 + j) * 2, 2);
-                    clippingPolygon[(clippingPolygonID + i) * 3 + j] = new Vec4D(
-                            tempVertex1[(i + j) * 4 + 0],
-                            tempVertex1[(i + j) * 4 + 1],
-                            tempVertex1[(i + j) * 4 + 2],
-                            tempVertex1[(i + j) * 4 + 3]
-                    );
-                    clippingPolygonsUV[(clippingPolygonID + i) * 3 + j] = new Vec2D(
-                            tempUV1[(i + j) * 2 + 0],
-                            tempUV1[(i + j) * 2 + 1]
-                    );
+                    System.arraycopy(tempVertex1, (i + j) * 4, clippingPolygon, ((clippingPolygonID + i) * 3 + j) * 4, 4);
+                    System.arraycopy(tempUV1, (i + j) * 2, clippingPolygonsUV, ((clippingPolygonID + i) * 3 + j) * 2, 2);
                 }
 
                 clippingPolygonMaterial[clippingPolygonID + i] = material;

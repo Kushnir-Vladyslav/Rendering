@@ -35,9 +35,9 @@ public class Buffers {
     public static int[] polygonMaterial;
 
     //Clipping polygons
-    public static Vec4D[] clippingPolygon;
-    public static Vec2D[] clippingPolygonsUV;
-    public static ObjectMaterial[] clippingPolygonMaterial;
+    public static float[] clippingPolygon;
+    public static float[] clippingPolygonsUV;
+    public static int[] clippingPolygonMaterial;
 
     public static AtomicInteger clippingCounter;
 

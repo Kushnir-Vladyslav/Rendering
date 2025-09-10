@@ -6,14 +6,14 @@ import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class PerspectiveDivideAndViewportTransformThreads extends KernelCPU {
-    private Vec4D[] vertexBuffer;
+    private float[] vertexBuffer;
     private int width;
     private int height;
     private final int numberOfTasks;
 
     public PerspectiveDivideAndViewportTransformThreads (
             int id,
-            Vec4D[] vertexBuffer,
+            float[] vertexBuffer,
             int width,
             int height,
             AtomicInteger clippingCounter
@@ -34,16 +34,12 @@ public class PerspectiveDivideAndViewportTransformThreads extends KernelCPU {
                 return;
             }
 
-            Vec4D vertex = vertexBuffer[id];
+            int vertexID = id * 4;
 
-            float x = vertex.x() / vertex.w();
-            float y = vertex.y() / vertex.w();
-            float z = vertex.z() / vertex.w();
+            vertexBuffer[vertexID + 0] = (vertexBuffer[vertexID + 0] / vertexBuffer[vertexID + 3] + 1) * 0.f * width;
+            vertexBuffer[vertexID + 1] = (-vertexBuffer[vertexID + 1] / vertexBuffer[vertexID + 3] + 1) * 0.f * height;
+            vertexBuffer[vertexID + 2] = vertexBuffer[vertexID + 2] / vertexBuffer[vertexID + 3];
 
-            x = (x + 1) * 0.5f * width;
-            y = (-y + 1) * 0.5f * height;
-
-            vertexBuffer[id] = new Vec4D(x, y, z, vertex.w());
         } catch (Exception e) {
             System.err.println(this.getClass().getSimpleName());
             System.err.println(e.getMessage());

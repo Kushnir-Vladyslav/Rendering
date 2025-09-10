@@ -91,9 +91,9 @@ public class BuffersPreparation {
         Buffers.polygonMaterial = new int[Buffers.bufferObjectsRef[objects.size()] / 3];
 
         //clipped polygons
-        Buffers.clippingPolygon = new Vec4D[Buffers.bufferObjectsRef[objects.size()] * CLIPPING_MULTIPLIER];
-        Buffers.clippingPolygonsUV = new Vec2D[Buffers.bufferObjectsRef[objects.size()] * CLIPPING_MULTIPLIER];
-        Buffers.clippingPolygonMaterial = new ObjectMaterial[Buffers.bufferObjectsRef[objects.size()] * CLIPPING_MULTIPLIER / 3];
+        Buffers.clippingPolygon = new float[Buffers.bufferObjectsRef[objects.size()] * CLIPPING_MULTIPLIER * 4];
+        Buffers.clippingPolygonsUV = new float[Buffers.bufferObjectsRef[objects.size()] * CLIPPING_MULTIPLIER * 2];
+        Buffers.clippingPolygonMaterial = new int[Buffers.bufferObjectsRef[objects.size()] * CLIPPING_MULTIPLIER / 3];
 
         Buffers.clippingCounter = new AtomicInteger(0);
 

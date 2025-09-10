@@ -10,9 +10,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
 public class RasterizationThreads extends KernelCPU {
-    private Vec4D[] vertexBuffer;
-    private Vec2D[] bufferUV;
-    private ObjectMaterial[] materials;
+    private float[] vertexBuffer;
+    private float[] bufferUV;
+    private int[] materials;
     private Texture[] texture;
     private PixelLinkedList[] pixelLinkedList;
     private AtomicIntegerArray heads;
@@ -23,9 +23,9 @@ public class RasterizationThreads extends KernelCPU {
 
     public RasterizationThreads(
             int id,
-            Vec4D[] vertexBuffer,
-            Vec2D[] bufferUV,
-            ObjectMaterial[] materials,
+            float[] vertexBuffer,
+            float[] bufferUV,
+            int[] materials,
             Texture[] texture,
             PixelLinkedList[] pixelLinkedList,
             AtomicIntegerArray heads,
@@ -48,8 +48,8 @@ public class RasterizationThreads extends KernelCPU {
         this.numberOfTasks = clippingCounter.get();
     }
 
-    private float vectorProduct (Vec2D TriangleEdge, Vec2D ToPointVector) {
-        return (TriangleEdge.x() * ToPointVector.y() - TriangleEdge.y() * ToPointVector.x());
+    private float vectorProduct (float[] TriangleEdge, float[] ToPointVector) {
+        return (TriangleEdge[0] * ToPointVector[1] - TriangleEdge[1] * ToPointVector[0]);
     }
 
     private void pushPixel(int pixelID, int color, float depth) {
@@ -59,6 +59,30 @@ public class RasterizationThreads extends KernelCPU {
         pixelLinkedList[currPixel] = new PixelLinkedList(color, depth, prevPixel);
     }
 
+    private float[] vertex1 = new float[4];
+    private float[] vertex2 = new float[4];
+    private float[] vertex3 = new float[4];
+
+    private float[] UV1 = new float[2];
+    private float[] UV2 = new float[2];
+    private float[] UV3 = new float[2];
+
+    private float[] edge1 = new float[2];
+    private float[] edge2 = new float[2];
+    private float[] edge3 = new float[2];
+
+    private float[] pointVector = new float[2];
+
+    private float[] pixelVector1 = new float[2];
+    private float[] pixelVector2 = new float[2];
+    private float[] pixelVector3 = new float[2];
+
+    private float[] pixelPoint = new float[2];
+
+    private float[] pixelUV1 = new float[2];
+    private float[] pixelUV2 = new float[2];
+    private float[] pixelUV3 = new float[2];
+
     @Override
     protected void thread() {
         try {
@@ -67,68 +91,80 @@ public class RasterizationThreads extends KernelCPU {
                 return;
             }
 
-            Vec4D vertex1 = vertexBuffer[id * 3 + 0];
-            Vec4D vertex2 = vertexBuffer[id * 3 + 1];
-            Vec4D vertex3 = vertexBuffer[id * 3 + 2];
+            System.arraycopy(vertexBuffer, (id * 3 + 0) * 4, vertex1, 0, 4);
+            System.arraycopy(vertexBuffer, (id * 3 + 1) * 4, vertex2, 0, 4);
+            System.arraycopy(vertexBuffer, (id * 3 + 2) * 4, vertex3, 0, 4);
 
-            Vec2D UV1 = bufferUV[id * 3 + 0];
-            Vec2D UV2 = bufferUV[id * 3 + 1];
-            Vec2D UV3 = bufferUV[id * 3 + 2];
+            System.arraycopy(bufferUV, (id * 3 + 0) * 2, UV1, 0, 2);
+            System.arraycopy(bufferUV, (id * 3 + 1) * 2, UV2, 0, 2);
+            System.arraycopy(bufferUV, (id * 3 + 2) * 2, UV3, 0, 2);
 
-            int minX = (int) Math.floor(vertex1.x());
-            if (minX > vertex2.x()) minX = (int) Math.floor(vertex2.x());
-            if (minX > vertex3.x()) minX = (int) Math.floor(vertex3.x());
+            int minX = (int) Math.floor(vertex1[0]);
+            if (minX > vertex2[0]) minX = (int) Math.floor(vertex2[0]);
+            if (minX > vertex3[0]) minX = (int) Math.floor(vertex3[0]);
             if (minX < 0) minX = 0;
 
-            int maxX = (int) Math.ceil(vertex1.x());
-            if (maxX < vertex2.x()) maxX = (int) Math.ceil(vertex2.x());
-            if (maxX < vertex3.x()) maxX = (int) Math.ceil(vertex3.x());
+            int maxX = (int) Math.ceil(vertex1[0]);
+            if (maxX < vertex2[0]) maxX = (int) Math.ceil(vertex2[0]);
+            if (maxX < vertex3[0]) maxX = (int) Math.ceil(vertex3[0]);
             if (maxX >= width) maxX = width - 1;
 
-            int minY = (int) Math.floor(vertex1.y());
-            if (minY > vertex2.y()) minY = (int) Math.floor(vertex2.y());
-            if (minY > vertex3.y()) minY = (int) Math.floor(vertex3.y());
+            int minY = (int) Math.floor(vertex1[1]);
+            if (minY > vertex2[1]) minY = (int) Math.floor(vertex2[1]);
+            if (minY > vertex3[1]) minY = (int) Math.floor(vertex3[1]);
             if (minY < 0) minY = 0;
 
-            int maxY = (int) Math.ceil(vertex1.y());
-            if (maxY < vertex2.y()) maxY = (int) Math.ceil(vertex2.y());
-            if (maxY < vertex3.y()) maxY = (int) Math.ceil(vertex3.y());
+            int maxY = (int) Math.ceil(vertex1[1]);
+            if (maxY < vertex2[1]) maxY = (int) Math.ceil(vertex2[1]);
+            if (maxY < vertex3[1]) maxY = (int) Math.ceil(vertex3[1]);
             if (maxY >= height) maxY = height - 1;
 
-            Vec2D edge1 = new Vec2D(vertex2.x() - vertex1.x(), vertex2.y() - vertex1.y());
-            Vec2D edge2 = new Vec2D(vertex3.x() - vertex2.x(), vertex3.y() - vertex2.y());
-            Vec2D edge3 = new Vec2D(vertex1.x() - vertex3.x(), vertex1.y() - vertex3.y());
+            edge1[0] = vertex2[0] - vertex1[0];
+            edge1[1] = vertex2[1] - vertex1[1];
 
-            boolean isTopLeft1 = (edge1.y() > 0.f) || (edge1.x() > 0.f && edge1.y() == 0.f);
-            boolean isTopLeft2 = (edge2.y() > 0.f) || (edge2.x() > 0.f && edge2.y() == 0.f);
-            boolean isTopLeft3 = (edge3.y() > 0.f) || (edge3.x() > 0.f && edge3.y() == 0.f);
+            edge2[0] = vertex3[0] - vertex2[0];
+            edge2[1] = vertex3[1] - vertex2[1];
 
-            Vec2D pointVector = new Vec2D(vertex3.x() - vertex1.x(), vertex3.y() - vertex1.y());
+            edge3[0] = vertex1[0] - vertex3[0];
+            edge3[1] = vertex1[1] - vertex3[1];
+
+            boolean isTopLeft1 = (edge1[1] > 0.f) || (edge1[0] > 0.f && edge1[1] == 0.f);
+            boolean isTopLeft2 = (edge2[1] > 0.f) || (edge2[0] > 0.f && edge2[1] == 0.f);
+            boolean isTopLeft3 = (edge3[1] > 0.f) || (edge3[0] > 0.f && edge3[1] == 0.f);
+
+            pointVector[0] = vertex3[0] - vertex1[0];
+            pointVector[1] = vertex3[1] - vertex1[1];
             float converseBaryCentricDiv = 1.f / vectorProduct(edge1, pointVector);
 
-            float converseW1 = 1.f / vertex1.w();
-            float converseW2 = 1.f / vertex2.w();
-            float converseW3 = 1.f / vertex3.w();
+            float converseW1 = 1.f / vertex1[3];
+            float converseW2 = 1.f / vertex2[3];
+            float converseW3 = 1.f / vertex3[3];
 
-            Vec2D pixelPoint = new Vec2D(minX, minY).add(0.5f, 0.5f);
+            pixelPoint[0] = minX + 0.5f;
+            pixelPoint[1] = minY + 0.5f;
 
-            Vec2D pixelVector1 = new Vec2D(pixelPoint.x() - vertex1.x(), pixelPoint.y() - vertex1.y());
-            Vec2D pixelVector2 = new Vec2D(pixelPoint.x() - vertex2.x(), pixelPoint.y() - vertex2.y());
-            Vec2D pixelVector3 = new Vec2D(pixelPoint.x() - vertex3.x(), pixelPoint.y() - vertex3.y());
+            pixelVector1[0] = pixelPoint[0] - vertex1[0];
+            pixelVector1[1] = pixelPoint[1] - vertex1[1];
+
+            pixelVector2[0] = pixelPoint[0] - vertex2[0];
+            pixelVector2[1] = pixelPoint[1] - vertex2[1];
+
+            pixelVector3[0] = pixelPoint[0] - vertex3[0];
+            pixelVector3[1] = pixelPoint[1] - vertex3[1];
 
             float baseLengthVectorProduct1 = vectorProduct(pixelVector1, edge1);
             float baseLengthVectorProduct2 = vectorProduct(pixelVector2, edge2);
             float baseLengthVectorProduct3 = vectorProduct(pixelVector3, edge3);
 
             for (int y = minY; y <= maxY; y++) {
-                float offsetYLengthVectorProduct1 = baseLengthVectorProduct1 - edge1.x() * (y - minY);
-                float offsetYLengthVectorProduct2 = baseLengthVectorProduct2 - edge2.x() * (y - minY);
-                float offsetYLengthVectorProduct3 = baseLengthVectorProduct3 - edge3.x() * (y - minY);
+                float offsetYLengthVectorProduct1 = baseLengthVectorProduct1 - edge1[0] * (y - minY);
+                float offsetYLengthVectorProduct2 = baseLengthVectorProduct2 - edge2[0] * (y - minY);
+                float offsetYLengthVectorProduct3 = baseLengthVectorProduct3 - edge3[0] * (y - minY);
 
                 for (int x = minX; x <= maxX; x++) {
-                    float lengthVectorProduct1 = offsetYLengthVectorProduct1 + edge1.y() * (x - minX);
-                    float lengthVectorProduct2 = offsetYLengthVectorProduct2 + edge2.y() * (x - minX);
-                    float lengthVectorProduct3 = offsetYLengthVectorProduct3 + edge3.y() * (x - minX);
+                    float lengthVectorProduct1 = offsetYLengthVectorProduct1 + edge1[1] * (x - minX);
+                    float lengthVectorProduct2 = offsetYLengthVectorProduct2 + edge2[1] * (x - minX);
+                    float lengthVectorProduct3 = offsetYLengthVectorProduct3 + edge3[1] * (x - minX);
 
                     if ((lengthVectorProduct1 <= 0 || (isTopLeft1 && lengthVectorProduct1 == 0.f)) &&
                             (lengthVectorProduct2 <= 0 || (isTopLeft2 && lengthVectorProduct2 == 0.f)) &&
@@ -139,19 +175,22 @@ public class RasterizationThreads extends KernelCPU {
                         float T2 = -lengthVectorProduct3 * converseBaryCentricDiv;
                         float T3 = -lengthVectorProduct1 * converseBaryCentricDiv;
 
-                        float depth = T1 * vertex1.z() + T2 * vertex2.z() + T3 * vertex3.z();
+                        float depth = T1 * vertex1[2] + T2 * vertex2[2] + T3 * vertex3[2];
 
                         float oneOverW = T1 * converseW1 + T2 * converseW2 + T3 * converseW3;
 
-                        Vec2D pixelUV1 = new Vec2D(UV1.x() * converseW1 * T1, UV1.y() * converseW1 * T1);
-                        Vec2D pixelUV2 = new Vec2D(UV2.x() * converseW2 * T2, UV2.y() * converseW2 * T2);
-                        Vec2D pixelUV3 = new Vec2D(UV3.x() * converseW3 * T3, UV3.y() * converseW3 * T3);
+                        pixelUV1[0] = UV1[0] * converseW1 * T1;
+                        pixelUV1[1] = UV1[1] * converseW1 * T1;
 
-                        int color = texture[materials[id].textureOrder].getColor(
-                                new Vec2D(
-                                        (pixelUV1.x() + pixelUV2.x() + pixelUV3.x()) / oneOverW,
-                                        (pixelUV1.y() + pixelUV2.y() + pixelUV3.y()) / oneOverW
-                                )
+                        pixelUV2[0] = UV2[0] * converseW2 * T2;
+                        pixelUV2[1] = UV2[1] * converseW2 * T2;
+
+                        pixelUV3[0] = UV3[0] * converseW3 * T3;
+                        pixelUV3[1] = UV3[1] * converseW3 * T3;
+
+                        int color = texture[materials[id]].getColor(
+                                (pixelUV1[0] + pixelUV2[0] + pixelUV3[0]) / oneOverW,
+                                (pixelUV1[1] + pixelUV2[1] + pixelUV3[1]) / oneOverW
                         );
 
                         pushPixel(pixelID, color, depth);
