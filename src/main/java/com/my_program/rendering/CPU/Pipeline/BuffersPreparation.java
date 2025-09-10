@@ -103,7 +103,9 @@ public class BuffersPreparation {
 
         //Rasterization
         Buffers.heads = new AtomicIntegerArray(Buffers.width * Buffers.height);
-        Buffers.fragments = new PixelLinkedList[Buffers.width * Buffers.height * FRAGMENTS_PER_PIXEL];
+        Buffers.fragmentsColor = new int[Buffers.width * Buffers.height * FRAGMENTS_PER_PIXEL];
+        Buffers.fragmentsDepth = new float[Buffers.width * Buffers.height * FRAGMENTS_PER_PIXEL];
+        Buffers.fragmentsNext = new int[Buffers.width * Buffers.height * FRAGMENTS_PER_PIXEL];
 
         Buffers.pixelCounter = new AtomicInteger(0);
 
@@ -127,7 +129,9 @@ public class BuffersPreparation {
 
         //Rasterization
         Buffers.heads = new AtomicIntegerArray(Buffers.width * Buffers.height);
-        Buffers.fragments = new PixelLinkedList[Buffers.width * Buffers.height * FRAGMENTS_PER_PIXEL];
+        Buffers.fragmentsColor = new int[Buffers.width * Buffers.height * FRAGMENTS_PER_PIXEL];
+        Buffers.fragmentsDepth = new float[Buffers.width * Buffers.height * FRAGMENTS_PER_PIXEL];
+        Buffers.fragmentsNext = new int[Buffers.width * Buffers.height * FRAGMENTS_PER_PIXEL];
 
         //processing
         Buffers.pixels = new int[Buffers.width * Buffers.height];

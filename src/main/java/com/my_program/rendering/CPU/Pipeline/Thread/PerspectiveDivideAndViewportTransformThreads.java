@@ -36,8 +36,8 @@ public class PerspectiveDivideAndViewportTransformThreads extends KernelCPU {
 
             int vertexID = id * 4;
 
-            vertexBuffer[vertexID + 0] = (vertexBuffer[vertexID + 0] / vertexBuffer[vertexID + 3] + 1) * 0.f * width;
-            vertexBuffer[vertexID + 1] = (-vertexBuffer[vertexID + 1] / vertexBuffer[vertexID + 3] + 1) * 0.f * height;
+            vertexBuffer[vertexID + 0] = (vertexBuffer[vertexID + 0] / vertexBuffer[vertexID + 3] + 1) * 0.5f * width;
+            vertexBuffer[vertexID + 1] = (-vertexBuffer[vertexID + 1] / vertexBuffer[vertexID + 3] + 1) * 0.5f * height;
             vertexBuffer[vertexID + 2] = vertexBuffer[vertexID + 2] / vertexBuffer[vertexID + 3];
 
         } catch (Exception e) {

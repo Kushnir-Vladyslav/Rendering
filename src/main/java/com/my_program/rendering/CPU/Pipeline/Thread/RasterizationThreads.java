@@ -1,10 +1,9 @@
 package com.my_program.rendering.CPU.Pipeline.Thread;
 
-import com.my_program.rendering.CPU.Buffers.ObjectMaterial;
 import com.my_program.rendering.CPU.Pipeline.PixelLinkedList;
 import com.my_program.rendering.Texture;
 import com.my_program.rendering.Vec2D;
-import com.my_program.rendering.Vec4D;
+
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerArray;
@@ -14,50 +13,15 @@ public class RasterizationThreads extends KernelCPU {
     private float[] bufferUV;
     private int[] materials;
     private Texture[] texture;
-    private PixelLinkedList[] pixelLinkedList;
+    public int[] fragmentsColor;
+    public float[] fragmentsDepth;
+    public int[] fragmentsNext;
     private AtomicIntegerArray heads;
     private AtomicInteger pixelCounter;
     private int width;
     private int height;
     private final int numberOfTasks;
 
-    public RasterizationThreads(
-            int id,
-            float[] vertexBuffer,
-            float[] bufferUV,
-            int[] materials,
-            Texture[] texture,
-            PixelLinkedList[] pixelLinkedList,
-            AtomicIntegerArray heads,
-            AtomicInteger pixelCounter,
-            int width,
-            int height,
-            AtomicInteger clippingCounter
-    )
-    {
-        this.idWorkGroup = id;
-        this.vertexBuffer = vertexBuffer;
-        this.bufferUV = bufferUV;
-        this.materials = materials;
-        this.texture = texture;
-        this.pixelLinkedList = pixelLinkedList;
-        this.heads = heads;
-        this.pixelCounter = pixelCounter;
-        this.width = width;
-        this.height = height;
-        this.numberOfTasks = clippingCounter.get();
-    }
-
-    private float vectorProduct (float[] TriangleEdge, float[] ToPointVector) {
-        return (TriangleEdge[0] * ToPointVector[1] - TriangleEdge[1] * ToPointVector[0]);
-    }
-
-    private void pushPixel(int pixelID, int color, float depth) {
-        int currPixel = pixelCounter.getAndIncrement();
-        int prevPixel = heads.getAndSet(pixelID, currPixel);
-
-        pixelLinkedList[currPixel] = new PixelLinkedList(color, depth, prevPixel);
-    }
 
     private float[] vertex1 = new float[4];
     private float[] vertex2 = new float[4];
@@ -73,15 +37,55 @@ public class RasterizationThreads extends KernelCPU {
 
     private float[] pointVector = new float[2];
 
+    private float[] pixelPoint = new float[2];
+    
     private float[] pixelVector1 = new float[2];
     private float[] pixelVector2 = new float[2];
     private float[] pixelVector3 = new float[2];
+    
+    public RasterizationThreads(
+            int id,
+            float[] vertexBuffer,
+            float[] bufferUV,
+            int[] materials,
+            Texture[] texture,
+            int[] fragmentsColor,
+            float[] fragmentsDepth,
+            int[] fragmentsNext,
+            AtomicIntegerArray heads,
+            AtomicInteger pixelCounter,
+            int width,
+            int height,
+            AtomicInteger clippingCounter
+    )
+    {
+        this.idWorkGroup = id;
+        this.vertexBuffer = vertexBuffer;
+        this.bufferUV = bufferUV;
+        this.materials = materials;
+        this.texture = texture;
+        this.fragmentsColor = fragmentsColor;
+        this.fragmentsDepth = fragmentsDepth;
+        this.fragmentsNext = fragmentsNext;
+        this.heads = heads;
+        this.pixelCounter = pixelCounter;
+        this.width = width;
+        this.height = height;
+        this.numberOfTasks = clippingCounter.get();
+    }
 
-    private float[] pixelPoint = new float[2];
+    private float vectorProduct (float[] TriangleEdge, float[] ToPointVector) {
+        return (TriangleEdge[0] * ToPointVector[1] - TriangleEdge[1] * ToPointVector[0]);
+    }
 
-    private float[] pixelUV1 = new float[2];
-    private float[] pixelUV2 = new float[2];
-    private float[] pixelUV3 = new float[2];
+    private void pushPixel(int pixelID, int color, float depth) {
+        int currPixel = pixelCounter.getAndIncrement();
+        int prevPixel = heads.getAndSet(pixelID, currPixel);
+
+        fragmentsColor[currPixel] = color;
+        fragmentsDepth[currPixel] = depth;
+        fragmentsNext[currPixel] = prevPixel;
+    }
 
     @Override
     protected void thread() {
@@ -134,6 +138,7 @@ public class RasterizationThreads extends KernelCPU {
 
             pointVector[0] = vertex3[0] - vertex1[0];
             pointVector[1] = vertex3[1] - vertex1[1];
+            
             float converseBaryCentricDiv = 1.f / vectorProduct(edge1, pointVector);
 
             float converseW1 = 1.f / vertex1[3];
@@ -179,18 +184,15 @@ public class RasterizationThreads extends KernelCPU {
 
                         float oneOverW = T1 * converseW1 + T2 * converseW2 + T3 * converseW3;
 
-                        pixelUV1[0] = UV1[0] * converseW1 * T1;
-                        pixelUV1[1] = UV1[1] * converseW1 * T1;
-
-                        pixelUV2[0] = UV2[0] * converseW2 * T2;
-                        pixelUV2[1] = UV2[1] * converseW2 * T2;
-
-                        pixelUV3[0] = UV3[0] * converseW3 * T3;
-                        pixelUV3[1] = UV3[1] * converseW3 * T3;
+                        Vec2D pixelUV1 = new Vec2D(UV1[0] * converseW1 * T1, UV1[1] * converseW1 * T1);
+                        Vec2D pixelUV2 = new Vec2D(UV2[0] * converseW2 * T2, UV2[1] * converseW2 * T2);
+                        Vec2D pixelUV3 = new Vec2D(UV3[0] * converseW3 * T3, UV3[1] * converseW3 * T3);
 
                         int color = texture[materials[id]].getColor(
-                                (pixelUV1[0] + pixelUV2[0] + pixelUV3[0]) / oneOverW,
-                                (pixelUV1[1] + pixelUV2[1] + pixelUV3[1]) / oneOverW
+                                new Vec2D(
+                                        (pixelUV1.x() + pixelUV2.x() + pixelUV3.x()) / oneOverW,
+                                        (pixelUV1.y() + pixelUV2.y() + pixelUV3.y()) / oneOverW
+                                )
                         );
 
                         pushPixel(pixelID, color, depth);

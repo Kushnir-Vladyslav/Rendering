@@ -7,21 +7,27 @@ import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
 public class FragmentProcessing extends KernelCPU {
-    private PixelLinkedList[] pixelLinkedList;
+    public int[] fragmentsColor;
+    public float[] fragmentsDepth;
+    public int[] fragmentsNext;
     private AtomicIntegerArray heads;
     private int[] pixels;
     private final int numberOfTasks;
 
     public FragmentProcessing(
             int id,
-            PixelLinkedList[] pixelLinkedList,
+            int[] fragmentsColor,
+            float[] fragmentsDepth,
+            int[] fragmentsNext,
             AtomicIntegerArray heads,
             int[] pixels,
             int width,
             int height
     ) {
         this.idWorkGroup = id;
-        this.pixelLinkedList = pixelLinkedList;
+        this.fragmentsColor = fragmentsColor;
+        this.fragmentsDepth = fragmentsDepth;
+        this.fragmentsNext = fragmentsNext;
         this.heads = heads;
         this.pixels = pixels;
         this.numberOfTasks = width * height;
@@ -63,13 +69,12 @@ public class FragmentProcessing extends KernelCPU {
             }
 
             while (fragmentPointer != -1) {
-                PixelLinkedList fragment = pixelLinkedList[fragmentPointer];
-                colors[fragmentCounter] = fragment.color;
-                depth[fragmentCounter] = fragment.depth;
+                colors[fragmentCounter] = fragmentsColor[fragmentPointer];
+                depth[fragmentCounter] = fragmentsDepth[fragmentPointer];
 
                 fragmentCounter++;
 
-                fragmentPointer = fragment.nextIndex;
+                fragmentPointer = fragmentsNext[fragmentPointer];
             }
 
             for (int i = 0; i < fragmentCounter - 1; i++) {

@@ -103,7 +103,9 @@ public class PipelineProcessing {
                     Buffers.clippingPolygonsUV,
                     Buffers.clippingPolygonMaterial,
                     Buffers.textures,
-                    Buffers.fragments,
+                    Buffers.fragmentsColor,
+                    Buffers.fragmentsDepth,
+                    Buffers.fragmentsNext,
                     Buffers.heads,
                     Buffers.pixelCounter,
                     Buffers.width,
@@ -117,7 +119,9 @@ public class PipelineProcessing {
         for (int i = 0; i < Math.ceil((double) GS.getScreenWidth() * GS.getScreenHeight() / FragmentProcessing.POOL_SIZE); i++) {
             pool.submit(new FragmentProcessing(
                     i,
-                    Buffers.fragments,
+                    Buffers.fragmentsColor,
+                    Buffers.fragmentsDepth,
+                    Buffers.fragmentsNext,
                     Buffers.heads,
                     Buffers.pixels,
                     Buffers.width,

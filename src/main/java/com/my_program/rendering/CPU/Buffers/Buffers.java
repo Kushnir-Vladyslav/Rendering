@@ -46,7 +46,9 @@ public class Buffers {
     public static int height;
 
     //Rasterization
-    public static PixelLinkedList[] fragments;
+    public static int[] fragmentsColor;
+    public static float[] fragmentsDepth;
+    public static int[] fragmentsNext;
     public static AtomicIntegerArray heads;
     public static AtomicInteger pixelCounter;
 
